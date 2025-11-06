@@ -9,9 +9,11 @@ public class CommandWords {
         validCommands.put("go", "Move to another room");
         validCommands.put("quit", "End the game");
         validCommands.put("help", "Show help");
-        validCommands.put("look", "Look around");
-        validCommands.put("eat", "Eat something");
-        validCommands.put("teleport", "teleport to a room");
+        validCommands.put("look", "Look around your current room");
+        validCommands.put("take", "Pick up an item from the room");
+        validCommands.put("drop", "Drop an item from your inventory into the room");
+        validCommands.put("inventory", "Show all items you are carrying");
+        validCommands.put("teleport", "Teleport instantly to a specific room");
     }
 
     public boolean isCommand(String commandWord) {
@@ -19,10 +21,10 @@ public class CommandWords {
     }
 
     public void showAll() {
-        System.out.print("Valid commands are: ");
-        for (String command : validCommands.keySet()) {
-            System.out.print(command + " ");
+        System.out.println("Valid commands are:");
+        for (Map.Entry<String, String> entry : validCommands.entrySet()) {
+            System.out.printf("  %-10s - %s%n", entry.getKey(), entry.getValue());
         }
-        System.out.println();
     }
 }
+

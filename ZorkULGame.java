@@ -1,5 +1,5 @@
 /* This game is a classic text-based adventure set in a university environment.
-   The player starts outside the main entrance and can navigate through different rooms like a 
+   The player starts outside the main entrance and can navigate through different rooms like a
    lecture theatre, campus pub, computing lab, and admin office using simple text commands (e.g., "go east", "go west").
     The game provides descriptions of each location and lists possible exits.
 
@@ -9,7 +9,7 @@ Simple command parser: Recognizes a limited set of commands like "go", "help", a
 Player character: Tracks current location and handles moving between rooms.
 Text descriptions: Provides immersive text output describing the player's surroundings and available options.
 Help system: Lists valid commands to guide the player.
-Overall, it recreates the classic Zork interactive fiction experience with a university-themed setting, 
+Overall, it recreates the classic Zork interactive fiction experience with a university-themed setting,
 emphasizing exploration and simple command-driven gameplay
 */
 
@@ -26,8 +26,8 @@ public class ZorkULGame {
         Room outside, theatre, pub, lab, office, grotto;
 
         // create rooms
-        outside = new Room("outside the main entrance of the university");
-        theatre = new Room("in a lecture theatre");
+        outside = new Room("outside");
+        theatre = new Room("in Santa's work");
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
@@ -50,6 +50,9 @@ public class ZorkULGame {
 
         grotto.setExit("south", outside);
 
+        Item beer = new Item("Beer", "\nDrinking beer: \n+Nausea\n+Twistedness");
+
+        pub.addItem(beer);
         // create the player character and start outside
         player = new Character("player", outside);
     }
@@ -91,6 +94,18 @@ public class ZorkULGame {
             case "teleport":
                 teleportRoom(command);
                 break;
+            case "look":
+                player.getCurrentRoom().look();
+                break;
+            case "take":
+                takeItem(command);
+                break;
+            case "drop":
+                dropItem(command);
+                break;
+            case "inventory":
+                player.showInventory();
+                break;
             case "quit":
                 if (command.hasSecondWord()) {
                     System.out.println("Quit what?");
@@ -109,6 +124,56 @@ public class ZorkULGame {
         System.out.println("You are lost. You are alone. You wander around the university.");
         System.out.print("Your command words are: ");
         parser.showCommands();
+    }
+
+    private void takeItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Take what? ");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Room currentRoom = player.getCurrentRoom();
+        Item czechItem = null;
+
+        for (Item item : currentRoom.getItems()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                czechItem = item;
+                break;
+            }
+        }
+
+        if (czechItem == null) {
+            System.out.println("There is no item here!");
+        } else {
+            player.grabItem(czechItem, player.getCurrentRoom());
+            System.out.println("You have taken this item" + czechItem.getName());
+        }
+    }
+
+    private void dropItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Drop what? ");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Room currentRoom = player.getCurrentRoom();
+        Item czechItem = null;
+
+        for (Item item : currentRoom.getItems()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                czechItem = item;
+                break;
+            }
+        }
+
+        if (czechItem == null) {
+            System.out.println("This is not in your inventory!");
+        } else {
+            player.grabItem(czechItem, player.getCurrentRoom());
+            System.out.println("You dropped" + czechItem.getName());
+        }
     }
 
     private void teleportRoom(Command command) {
