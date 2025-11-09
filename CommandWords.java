@@ -13,7 +13,7 @@ public class CommandWords {
         validCommands.put("take", "Pick up an item from the room");
         validCommands.put("drop", "Drop an item from your inventory into the room");
         validCommands.put("inventory", "Show all items you are carrying");
-        validCommands.put("teleport", "Teleport instantly to a specific room");
+        validCommands.put("interact", "Interact with the NPCs in the room");
     }
 
     public boolean isCommand(String commandWord) {

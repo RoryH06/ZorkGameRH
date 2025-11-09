@@ -23,38 +23,70 @@ public class ZorkULGame {
     }
 
     private void createRooms() {
-        Room outside, theatre, pub, lab, office, grotto;
+        Room square, eskimo, jacks, grotto, dollar, cronins, ballintemple, rorys, whelans, nedkellys, clearys, longcourt, rathkeale;
 
         // create rooms
-        outside = new Room("outside");
-        theatre = new Room("in Santa's work");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        square = new Room("in the square");
+        eskimo = new Room("in Eskimo Pizza");
+        jacks = new Room("in Jacks Pub");
+        dollar = new Room("in The Silver Dollar");
+        cronins = new Room("in Cronins Nightclub");
         grotto = new Room("in Santa's grotto.");
+        ballintemple = new Room("in The Ballintemple.");
+        rorys = new Room("in Rorys house.");
+        whelans = new Room("in Whelans Pub.");
+        nedkellys = new Room("in Ned Kellys Bar.");
+        clearys = new Room("in Clearys.");
+        longcourt = new Room("in The Longcourt House Hotel.");
+        rathkeale = new Room("in Rathkeale.");
 
-        // initialise room exits
-        outside.setExit("east", theatre);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
-        outside.setExit("north", grotto);
+        square.setExit("west", eskimo);
+        square.setExit("south", ballintemple);
+        square.setExit("east", nedkellys);
+        square.setExit("north", dollar);
 
-        theatre.setExit("west", outside);
+        eskimo.setExit("west", jacks);
+        eskimo.setExit("east", square);
 
-        pub.setExit("east", outside);
+        jacks.setExit("west", grotto);
+        jacks.setExit("east", eskimo);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
+        grotto.setExit("east", jacks);
 
-        office.setExit("west", lab);
+        dollar.setExit("north", cronins);
+        dollar.setExit("south", square);
+        dollar.setExit("east", whelans);
 
-        grotto.setExit("south", outside);
+        cronins.setExit("south", dollar);
+
+        whelans.setExit("south", nedkellys);
+        whelans.setExit("west", dollar);
+
+        ballintemple.setExit("south", rorys);
+        ballintemple.setExit("north", square);
+
+        rorys.setExit("north", ballintemple);
+
+        nedkellys.setExit("north", whelans);
+        nedkellys.setExit("west", square);
+        nedkellys.setExit("east", clearys);
+
+        clearys.setExit("south", longcourt);
+        clearys.setExit("west", nedkellys);
+
+        longcourt.setExit("north", clearys);
 
         Item beer = new Item("Beer", "\nDrinking beer: \n+Nausea\n+Twistedness");
+        Item note = new Item("Note", "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.");
 
-        pub.addItem(beer);
-        // create the player character and start outside
-        player = new Character("player", outside);
+        rathkeale.addItem(beer);
+        square.addItem(note);
+
+        player = new Character("player", square);
+
+        FriendlyNPC santa = new FriendlyNPC("Santa", "A grotesquely overweight, yet jolly man", grotto, "*Burps*");
+
+        grotto.addNPC(santa);
     }
 
     public void play() {
@@ -70,7 +102,7 @@ public class ZorkULGame {
 
     private void printWelcome() {
         System.out.println();
-        System.out.println("Welcome to the University adventure!");
+        System.out.println("Welcome to 12 pubs of Christmas 'Hood Edition'!");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(player.getCurrentRoom().getLongDescription());
@@ -91,8 +123,8 @@ public class ZorkULGame {
             case "go":
                 goRoom(command);
                 break;
-            case "teleport":
-                teleportRoom(command);
+            case "interact":
+                doInteract(command);
                 break;
             case "look":
                 player.getCurrentRoom().look();
@@ -111,7 +143,7 @@ public class ZorkULGame {
                     System.out.println("Quit what?");
                     return false;
                 } else {
-                    return true; // signal to quit
+                    return true;
                 }
             default:
                 System.out.println("I don't know what you mean...");
@@ -121,7 +153,7 @@ public class ZorkULGame {
     }
 
     private void printHelp() {
-        System.out.println("You are lost. You are alone. You wander around the university.");
+        System.out.println("You are in the square. There's an ominous timer above your head. You have a strong sense of survival, beer...");
         System.out.print("Your command words are: ");
         parser.showCommands();
     }
@@ -176,24 +208,6 @@ public class ZorkULGame {
         }
     }
 
-    private void teleportRoom(Command command) {
-        if (!command.hasSecondWord()) {
-            System.out.println("Teleport where?");
-            return;
-        }
-        String destination = command.getSecondWord();
-
-        Room nextRoom = player.getCurrentRoom().getExit(destination);
-
-        if (nextRoom == null) {
-            System.out.println("You will fall into the void!");
-            return;
-        } else {
-            player.setCurrentRoom(nextRoom);
-            System.out.println(player.getCurrentRoom().getLongDescription());
-        }
-    }
-
     private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Go where?");
@@ -211,6 +225,26 @@ public class ZorkULGame {
             System.out.println(player.getCurrentRoom().getLongDescription());
         }
     }
+
+    private void doInteract(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Interact with who?");
+            return;
+        }
+
+        String targetName = command.getSecondWord();
+        Room room = player.getCurrentRoom();
+
+        for (NPC npc : room.getNPCs()) {
+            if (npc.getName().equalsIgnoreCase(targetName)) {
+                System.out.println(npc.interact());
+                return;
+            }
+        }
+
+        System.out.println("There’s no one named " + targetName + " here.");
+    }
+
 
     public static void main(String[] args) {
         ZorkULGame game = new ZorkULGame();

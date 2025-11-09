@@ -7,12 +7,14 @@ public class Room {
     private String description;
     private Map<String, Room> exits; // Map direction to neighboring Room
     private ArrayList<Item> items;
+    private ArrayList<NPC> npcs;
 
     public Room(String description) {
         this.name = name;
         this.description = description;
         exits = new HashMap<>();
         items = new ArrayList<>();
+        npcs = new ArrayList<>();
     }
 
     public String getName() {
@@ -42,10 +44,14 @@ public class Room {
     public void addItem(Item item) {
         items.add(item);
     }
+    public void addNPC(NPC npc) {
+        npcs.add(npc);
+    }
 
     public ArrayList<Item> getItems() {
         return items;
     }
+    public ArrayList<NPC> getNPCs() {return npcs; }
 
     public void look() {
         if (items.isEmpty()) {
@@ -56,7 +62,14 @@ public class Room {
                 System.out.println(item.getName());
             }
         }
-
+        if  (npcs.isEmpty()) {
+            System.out.println("Theres nobody here...");
+        } else {
+            System.out.println("NPCs in this room:");
+            for (NPC npc : npcs) {
+                System.out.println(npc.getName());
+            }
+        }
     }
 
     public String getLongDescription() {

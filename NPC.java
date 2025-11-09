@@ -1,0 +1,30 @@
+public abstract class NPC {
+    protected String name;
+    protected String description;
+    protected Room currentRoom;
+
+    public NPC(String name, String description, Room startingRoom) {
+        this.name = name;
+        this.description = description;
+        this.currentRoom = startingRoom;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(Room room) {
+        this.currentRoom = room;
+    }
+
+    // Every NPC must define its own interaction
+    public abstract String interact();
+}
