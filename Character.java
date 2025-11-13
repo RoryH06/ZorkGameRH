@@ -1,9 +1,11 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Character {
+public class Character implements Serializable {
     private String name;
     private Room currentRoom;
     private ArrayList<Item> inventory;
+
 
     public Character(String name, Room startingRoom) {
         this.name = name;
@@ -11,7 +13,6 @@ public class Character {
         this.inventory = new ArrayList<>();
     }
 
-    // --- Basic getters/setters ---
     public String getName() {
         return name;
     }
@@ -24,7 +25,10 @@ public class Character {
         this.currentRoom = room;
     }
 
-    // --- Movement ---
+    public ArrayList<Item> getInventory() {
+        return inventory;
+    }
+
     public void move(String direction) {
         Room nextRoom = currentRoom.getExit(direction);
         if (nextRoom != null) {

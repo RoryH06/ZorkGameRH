@@ -13,6 +13,8 @@ Overall, it recreates the classic Zork interactive fiction experience with a uni
 emphasizing exploration and simple command-driven gameplay
 */
 
+import java.io.*;
+
 public class ZorkULGame {
     private Parser parser;
     private Character player;
@@ -76,17 +78,23 @@ public class ZorkULGame {
 
         longcourt.setExit("north", clearys);
 
-        Item beer = new Item("Beer", "\nDrinking beer: \n+Nausea\n+Twistedness");
-        Item note = new Item("Note", "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.");
+        Item smithwicks = new Item("Beer", "\nDrinking beer: \n+Nausea\n+Twistedness", "Smithwicks" );
+        Item note = new Item("Note", "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see."
+                            , "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. " +
+                                "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
+        Item bottleOfJager = new Item("Bottle Of Jager", "\n Drinking bottle of Jager: \nA bad idea. \nMay die. \nWill never drink Jager again", "There seems to be Sams blood on this. \"What was he doing?\"");
 
-        rathkeale.addItem(beer);
+        rathkeale.addItem(smithwicks);
         square.addItem(note);
 
         player = new Character("player", square);
 
-        FriendlyNPC santa = new FriendlyNPC("Santa", "A grotesquely overweight, yet jolly man", grotto, "*Burps*");
+        FriendlyNPC santa = new FriendlyNPC("Santa", "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"", grotto, "*Burps*");
+        MerchantNPC sam =  new MerchantNPC("Sam", " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\"", longcourt, "Lets get litty in New Junk CITAY!");
 
         grotto.addNPC(santa);
+        longcourt.addNPC(sam);
+        sam.addItem(bottleOfJager);
     }
 
     public void play() {
@@ -135,8 +143,17 @@ public class ZorkULGame {
             case "drop":
                 dropItem(command);
                 break;
+            case "examine":
+                examineItem(command);
+                break;
             case "inventory":
                 player.showInventory();
+                break;
+            case "save":
+                saveGame("filename");
+                break;
+            case "resume":
+                resumeGame("filename");
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -245,9 +262,51 @@ public class ZorkULGame {
         System.out.println("There’s no one named " + targetName + " here.");
     }
 
+    private void examineItem(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Examine what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Item targetItem = null;
+
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                targetItem = item;
+                break;
+            }
+        }
+
+        if (targetItem == null) {
+            System.out.println("You don’t have any item called '" + itemName + "'.");
+        } else {
+            System.out.println(targetItem.getHiddenDescription());
+        }
+    }
+
+    public void saveGame(String fileName) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeObject(player);
+            System.out.println("Object has been serialized to" + fileName);
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void resumeGame(String fileName) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            player = (Character) in.readObject();
+            System.out.println("Object has been serialized to" + fileName);
+        } catch (IOException |  ClassNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         ZorkULGame game = new ZorkULGame();
         game.play();
     }
 }
+
+

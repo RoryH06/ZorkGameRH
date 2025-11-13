@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Serializable {
     private String name;
     private String description;
     private Map<String, Room> exits; // Map direction to neighboring Room
@@ -67,7 +68,7 @@ public class Room {
         } else {
             System.out.println("NPCs in this room:");
             for (NPC npc : npcs) {
-                System.out.println(npc.getName());
+                System.out.println(npc.getName() + ":" + npc.getDescription());
             }
         }
     }

@@ -1,4 +1,6 @@
-public abstract class NPC {
+import java.io.Serializable;
+
+public abstract class NPC implements Serializable {
     protected String name;
     protected String description;
     protected Room currentRoom;

@@ -50,14 +50,14 @@ public class GUI extends Application {
         rightBox.setAlignment(Pos.CENTER);
 
         // Main layout
-        BorderPane root = new BorderPane();
-        root.setCenter(output);
-        root.setTop(northBox);
-        root.setLeft(leftBox);
-        root.setRight(rightBox);
-        root.setBottom(bottomBox);
+        BorderPane border = new BorderPane();
+        border.setCenter(output);
+        border.setTop(northBox);
+        border.setLeft(leftBox);
+        border.setRight(rightBox);
+        border.setBottom(bottomBox);
 
-        Scene scene = new Scene(root, 1540, 800);
+        Scene scene = new Scene(border, 1540, 800);
         stage.setTitle("ZorkUL Game");
         stage.setScene(scene);
         stage.show();
