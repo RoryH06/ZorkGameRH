@@ -27,6 +27,7 @@ public abstract class NPC implements Serializable {
         this.currentRoom = room;
     }
 
-    // Every NPC must define its own interaction
     public abstract String interact();
+
 }
+

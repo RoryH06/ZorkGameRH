@@ -17,7 +17,7 @@ import java.io.*;
 
 public class ZorkULGame {
     private Parser parser;
-    private Character player;
+    public static Character player;
 
     public ZorkULGame() {
         createRooms();
@@ -82,7 +82,7 @@ public class ZorkULGame {
         Item note = new Item("Note", "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see."
                             , "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. " +
                                 "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
-        Item bottleOfJager = new Item("Bottle Of Jager", "\n Drinking bottle of Jager: \nA bad idea. \nMay die. \nWill never drink Jager again", "There seems to be Sams blood on this. \"What was he doing?\"");
+        Item jager = new Item("Jager", "\n Drinking bottle of Jager: \n+A bad idea. \n+May die. \n+Will never drink Jager again", "There seems to be Sams blood on this. \"What was he doing?\"");
 
         rathkeale.addItem(smithwicks);
         square.addItem(note);
@@ -90,11 +90,12 @@ public class ZorkULGame {
         player = new Character("player", square);
 
         FriendlyNPC santa = new FriendlyNPC("Santa", "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"", grotto, "*Burps*");
-        MerchantNPC sam =  new MerchantNPC("Sam", " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\"", longcourt, "Lets get litty in New Junk CITAY!");
+        MerchantNPC sam =  new MerchantNPC("Sam", " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\""
+                , longcourt, "Lets get litty in New Junk CITAY!", "Note", "Hey I just got scammed, I WANT MY JAGER BACK!");
 
         grotto.addNPC(santa);
         longcourt.addNPC(sam);
-        sam.addItem(bottleOfJager);
+        sam.addItem(jager);
     }
 
     public void play() {
@@ -155,6 +156,9 @@ public class ZorkULGame {
             case "resume":
                 resumeGame("filename");
                 break;
+            case "trade":
+                doTrade(command);
+                break;
             case "quit":
                 if (command.hasSecondWord()) {
                     System.out.println("Quit what?");
@@ -200,6 +204,8 @@ public class ZorkULGame {
         }
     }
 
+
+
     private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what? ");
@@ -210,7 +216,7 @@ public class ZorkULGame {
         Room currentRoom = player.getCurrentRoom();
         Item czechItem = null;
 
-        for (Item item : currentRoom.getItems()) {
+        for (Item item : player.getInventory()) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 czechItem = item;
                 break;
@@ -220,7 +226,7 @@ public class ZorkULGame {
         if (czechItem == null) {
             System.out.println("This is not in your inventory!");
         } else {
-            player.grabItem(czechItem, player.getCurrentRoom());
+            player.leaveItem(czechItem, player.getCurrentRoom());
             System.out.println("You dropped" + czechItem.getName());
         }
     }
@@ -302,6 +308,32 @@ public class ZorkULGame {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
+    private void doTrade(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Trade with who?");
+            return;
+        }
+
+        String targetName = command.getSecondWord();
+        Room room = player.getCurrentRoom();
+
+        for (NPC npc : room.getNPCs()) {
+            if (npc.getName().equalsIgnoreCase(targetName)) {
+
+                if (npc instanceof MerchantNPC merchant) {
+                    System.out.println(merchant.trade(player, room));
+                    return;
+                } else {
+                    System.out.println(npc.getName() + " is not a merchant.");
+                    return;
+                }
+            }
+        }
+
+        System.out.println("There is no one named " + targetName + " here.");
+    }
+
 
     public static void main(String[] args) {
         ZorkULGame game = new ZorkULGame();

@@ -72,13 +72,13 @@ public class Character implements Serializable {
         System.out.println("You dropped " + item.getName());
     }
 
-    // --- Search your inventory for a specific item ---
-    public Item findItemInInventory(String name) {
+    public Item findItemInInventory(String itemName) {
         for (Item item : inventory) {
-            if (item.getName().equalsIgnoreCase(name)) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
                 return item;
             }
         }
         return null;
     }
+
 }
