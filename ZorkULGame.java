@@ -25,7 +25,7 @@ public class ZorkULGame {
     }
 
     private void createRooms() {
-        Room square, eskimo, jacks, grotto, dollar, cronins, ballintemple, rorys, whelans, nedkellys, clearys, longcourt, rathkeale;
+        Room square, eskimo, jacks, grotto, dollar, cronins, ballintemple, rorys, whelans, nedkellys, clearys, longcourt, agartha;
 
         // create rooms
         square = new Room("in the square");
@@ -40,7 +40,7 @@ public class ZorkULGame {
         nedkellys = new Room("in Ned Kellys Bar.");//8
         clearys = new Room("in Clearys.");//9
         longcourt = new Room("in The Longcourt House Hotel.");//10
-        rathkeale = new Room("in Rathkeale.");//11
+        agartha = new Room("in Agartha.");//11
 
         square.setExit("west", eskimo);
         square.setExit("south", ballintemple);
@@ -145,7 +145,7 @@ public class ZorkULGame {
 
         DrinkItem mead = new DrinkItem(
                 "Mead",
-                "\nDrinking mead:\n+ One way ticket to Agartha\n+ Viking spirit\n+ Hairy chest",
+                "\nDrinking mead:\n+ Blonde hair and blue eyes\n+ Viking spirit\n+ Hairy chest",
                 "A mason jar that has the label \"Mead\""
         );
 
@@ -156,7 +156,7 @@ public class ZorkULGame {
         );
 
 
-        rathkeale.addItem(mead);
+        agartha.addItem(mead);
         jacks.addItem(guinness);
         nedkellys.addItem(vodka);
         rorys.addItem(sake);
@@ -338,6 +338,17 @@ public class ZorkULGame {
         }
     }
 
+    public String go(String direction) { //for da gui
+        Room nextRoom = player.getCurrentRoom().getExit(direction);
+
+        if (nextRoom == null) {
+            return "There is no door!";
+        } else {
+            player.setCurrentRoom(nextRoom);
+            return player.getCurrentRoom().getLongDescription();
+        }
+    }
+
     private void doInteract(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Interact with who?");
@@ -447,6 +458,17 @@ public class ZorkULGame {
         player.increaseDrinkCount();
 
         System.out.println("Drink count:" + player.drinkCount() + "/12");
+    }
+
+    public String processGuiCommand(String input) {
+        String[] words = input.split(" ", 2);
+        String command = words[0].toLowerCase();
+        String arg = words.length > 1 ? words[1] : null;
+
+        return switch (command) {
+            case "go" -> go(arg);
+            default -> "I don't know what you mean...";
+        };
     }
 
 

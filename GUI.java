@@ -1,5 +1,3 @@
-package GUI;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,34 +13,32 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Output area
-        TextArea output = new TextArea("Welcome to ZorkUL!");
+        // Text area for game output
+        TextArea output = new TextArea("Welcome to ZorkUL!\n");
         output.setEditable(false);
 
-        // Input box
+        // Input field (optional for typing commands)
         TextField input = new TextField();
         input.setPromptText("Enter a command...");
         input.setPrefHeight(40);
 
-        // Create the arrow buttons
-        DirectionButtons directionButtons = new DirectionButtons(output);
+        ZorkULGame game = new ZorkULGame();
+        DirectionButtons directionButtons = new DirectionButtons(output, game);
 
-        // Center North button horizontally
+        // Layout: North button at top
         HBox northBox = new HBox(directionButtons.getNorthButton());
         northBox.setAlignment(Pos.CENTER);
         northBox.setPadding(new Insets(10));
 
-        // Center South button horizontally ABOVE input box
+        // Layout: South button above input field
         HBox southBox = new HBox(directionButtons.getSouthButton());
         southBox.setAlignment(Pos.CENTER);
         southBox.setPadding(new Insets(10));
-
-        // Stack South button + input field together at the bottom
         VBox bottomBox = new VBox(5, southBox, input);
         bottomBox.setAlignment(Pos.CENTER);
         bottomBox.setPadding(new Insets(10));
 
-        // Left and right (center vertically)
+        // Layout: West and East buttons
         VBox leftBox = new VBox(directionButtons.getWestButton());
         leftBox.setAlignment(Pos.CENTER);
 
@@ -57,7 +53,8 @@ public class GUI extends Application {
         border.setRight(rightBox);
         border.setBottom(bottomBox);
 
-        Scene scene = new Scene(border, 1540, 800);
+        // Scene and stage
+        Scene scene = new Scene(border, 800, 600);
         stage.setTitle("ZorkUL Game");
         stage.setScene(scene);
         stage.show();
