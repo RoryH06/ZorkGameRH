@@ -5,7 +5,11 @@ public class Character implements Serializable {
     private String name;
     private Room currentRoom;
     private ArrayList<Item> inventory;
+    private int drinkCount = 0;
 
+    public int drinkCount() {
+        return drinkCount;
+    }
 
     public Character(String name, Room startingRoom) {
         this.name = name;
@@ -81,4 +85,20 @@ public class Character implements Serializable {
         return null;
     }
 
+    public void increaseDrinkCount() {
+        if (drinkCount < 12) {
+            drinkCount++;
+        }
+        if (ZorkULGame.player.drinkCount() >= 12) {
+            System.out.println("\nYOU DID IT! You finished the 12 pubs of Christmas!");
+            System.out.println("You collapse on the ground, victorious and drunk beyond reason...");
+            return;
+        }
+
+
+    }
+
+    public boolean removeItem(Item item) {
+        return inventory.remove(item);
+    }
 }

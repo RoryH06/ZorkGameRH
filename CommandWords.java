@@ -18,6 +18,7 @@ public class CommandWords {
         validCommands.put("save", "Save the game");
         validCommands.put("resume", "Resume the game");
         validCommands.put("trade", "Trade with an NPC");
+        validCommands.put("drink", "Drink a beer");
     }
 
     public boolean isCommand(String commandWord) {

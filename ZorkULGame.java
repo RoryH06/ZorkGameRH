@@ -29,18 +29,18 @@ public class ZorkULGame {
 
         // create rooms
         square = new Room("in the square");
-        eskimo = new Room("in Eskimo Pizza");
-        jacks = new Room("in Jacks Pub");
-        dollar = new Room("in The Silver Dollar");
-        cronins = new Room("in Cronins Nightclub");
-        grotto = new Room("in Santa's grotto.");
-        ballintemple = new Room("in The Ballintemple.");
-        rorys = new Room("in Rorys house.");
-        whelans = new Room("in Whelans Pub.");
-        nedkellys = new Room("in Ned Kellys Bar.");
-        clearys = new Room("in Clearys.");
-        longcourt = new Room("in The Longcourt House Hotel.");
-        rathkeale = new Room("in Rathkeale.");
+        eskimo = new Room("in Eskimo Pizza");//12
+        jacks = new Room("in Jacks Pub");//1
+        dollar = new Room("in The Silver Dollar");//2
+        cronins = new Room("in Cronins Nightclub");//3
+        grotto = new Room("in Santa's grotto.");//4
+        ballintemple = new Room("in The Ballintemple.");//5
+        rorys = new Room("in Rorys house.");//6
+        whelans = new Room("in Whelans Pub.");//7
+        nedkellys = new Room("in Ned Kellys Bar.");//8
+        clearys = new Room("in Clearys.");//9
+        longcourt = new Room("in The Longcourt House Hotel.");//10
+        rathkeale = new Room("in Rathkeale.");//11
 
         square.setExit("west", eskimo);
         square.setExit("south", ballintemple);
@@ -78,13 +78,96 @@ public class ZorkULGame {
 
         longcourt.setExit("north", clearys);
 
-        Item smithwicks = new Item("Beer", "\nDrinking beer: \n+Nausea\n+Twistedness", "Smithwicks" );
-        Item note = new Item("Note", "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see."
-                            , "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. " +
-                                "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
-        Item jager = new Item("Jager", "\n Drinking bottle of Jager: \n+A bad idea. \n+May die. \n+Will never drink Jager again", "There seems to be Sams blood on this. \"What was he doing?\"");
+        Item note = new Item("Note",
+                             "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
+                             "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. " +
+                                            "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
 
-        rathkeale.addItem(smithwicks);
+        DrinkItem jager = new DrinkItem(
+                "Jager",
+                "\nDrinking bottle of Jager:\n+ A bad idea.\n+ May die.\n+ Will never drink Jager again.",
+                "There seems to be Sam's blood on this. \"What was he doing?\""
+        );
+
+        DrinkItem smithwicks = new DrinkItem(
+                "Smithwicks",
+                "\nDrinking smithwicks:\n+ Up the Dubs\n+ Dublin accent",
+                "A Smithwicks bottle. Classic."
+        );
+
+        DrinkItem guinness = new DrinkItem(
+                "Guinness",
+                "\nDrinking Guinness:\n = Drinking soup",
+                "The black shtuff"
+        );
+
+        DrinkItem vodka = new DrinkItem(
+                "Vodka",
+                "\nDrinking vodka:\n+ Burning throat\n+ Instant regret",
+                "Good ol' Smirnoff"
+        );
+
+        DrinkItem coke = new DrinkItem(
+                "Coke",
+                "\nDrinking coke:\n+ Refreshment\n+ Look like a pussy\n+ Tastes Good",
+                "99% sure your friend put vodka in here"
+        );
+
+        DrinkItem cocktail = new DrinkItem(
+                "Cocktail",
+                "\nDrinking cocktail:\n+ Strawberry required \n+ Feeling a bit zesty",
+                "A pornstar martini. \n \"Who the fuck comes up with these names.\""
+        );
+
+        DrinkItem whiskey = new DrinkItem(
+                "Whiskey",
+                "\nDrinking whiskey:\n+ Warm chest\n+ Mumbling trad music imminent",
+                "The bottle is pristine, \"Is this LeHenny? I need a honey pack.\""
+        );
+
+        DrinkItem jagerBomb = new DrinkItem(
+                "Jagerbomb",
+                "\nDrinking Jagerbomb:\n+ Strange visions\n+ Slight buzzing sound?\n+ Feeling rejuvinated",
+                "The condesnation on the can of RedBull tempts you."
+        );
+
+        DrinkItem cider = new DrinkItem(
+                "Cider",
+                "\nDrinking cider:\n+ Sweetness\n+ Mild buzz\n+ Feel slightly fancy",
+                "Orchard Thieves, \"I feel 14 again\""
+        );
+
+        DrinkItem sake = new DrinkItem(
+                "Sake",
+                "\nDrinking sake:\n+ Warm calm feeling\n+ Soft aftertaste\n+ Katana mastery",
+                "A delicate ceramic bottle with elegant brush strokes. \n \"Where the hell did this come from\""
+        );
+
+        DrinkItem mead = new DrinkItem(
+                "Mead",
+                "\nDrinking mead:\n+ One way ticket to Agartha\n+ Viking spirit\n+ Hairy chest",
+                "A mason jar that has the label \"Mead\""
+        );
+
+        DrinkItem moonshine = new DrinkItem(
+                "Moonshine",
+                "\nDrinking moonshine:\n+ Probably illegal\n+ Definitely dangerous\n+ Might go blind",
+                "The jar has no label. Just a hand-written warning: \"DONT.\""
+        );
+
+
+        rathkeale.addItem(mead);
+        jacks.addItem(guinness);
+        nedkellys.addItem(vodka);
+        rorys.addItem(sake);
+        eskimo.addItem(cocktail);
+        dollar.addItem(moonshine);
+        cronins.addItem(jagerBomb);
+        whelans.addItem(cider);
+        grotto.addItem(whiskey);
+        clearys.addItem(coke);
+        ballintemple.addItem(guinness);
+
         square.addItem(note);
 
         player = new Character("player", square);
@@ -158,6 +241,12 @@ public class ZorkULGame {
                 break;
             case "trade":
                 doTrade(command);
+            case "drink":
+                doDrink(command);
+                if (player.drinkCount() >= 12) {
+                    System.out.println("\nYOU COMPLETED THE 12 PUBS CHALLENGE!");
+                    return true;
+                }
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -332,6 +421,32 @@ public class ZorkULGame {
         }
 
         System.out.println("There is no one named " + targetName + " here.");
+    }
+
+    private void doDrink (Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Drink what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Item item = player.findItemInInventory(itemName);
+
+        if (item == null) {
+            System.out.println("You dont have that!");
+            return;
+        }
+
+        if (!(item instanceof DrinkItem)) {
+            System.out.println("You cant drink that!");
+        }
+
+        Drinkable drink = (Drinkable)  item;
+        System.out.println(drink.drink());
+        player.removeItem(item);
+        player.increaseDrinkCount();
+
+        System.out.println("Drink count:" + player.drinkCount() + "/12");
     }
 
 
