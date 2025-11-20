@@ -1,3 +1,5 @@
+package Game;
+
 public class DrinkItem extends Item implements Drinkable {
 
     public DrinkItem(String name, String description, String hiddenDescription) {

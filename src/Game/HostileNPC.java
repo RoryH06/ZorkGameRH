@@ -1,3 +1,5 @@
+package Game;
+
 public class HostileNPC extends NPC {
     private String dialogue;
     private int health;

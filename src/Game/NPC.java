@@ -1,3 +1,5 @@
+package Game;
+
 import java.io.Serializable;
 
 public abstract class NPC implements Serializable {

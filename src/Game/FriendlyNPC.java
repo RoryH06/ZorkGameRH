@@ -1,3 +1,5 @@
+package Game;
+
 public class FriendlyNPC extends NPC {
     private String dialogue;
 

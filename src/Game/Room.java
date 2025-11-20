@@ -1,3 +1,5 @@
+package Game;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -6,11 +8,13 @@ import java.util.ArrayList;
 public class Room implements Serializable {
     private String name;
     private String description;
-    private Map<String, Room> exits; // Map direction to neighboring Room
+    private Map<String, Room> exits;
     private ArrayList<Item> items;
     private ArrayList<NPC> npcs;
+    private int mapX;
+    private int mapY;
 
-    public Room(String description) {
+    public Room(String name, String description) {
         this.name = name;
         this.description = description;
         exits = new HashMap<>();
@@ -76,4 +80,17 @@ public class Room implements Serializable {
     public String getLongDescription() {
         return "You are " + description + ".\nExits: " + getExitString();
     }
+    public void setMapPosition(int x, int y) {
+        this.mapX = x;
+        this.mapY = y;
+    }
+
+    public int getMapX() {
+        return mapX;
+    }
+
+    public int getMapY() {
+        return mapY;
+    }
 }
+

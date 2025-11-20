@@ -1,10 +1,11 @@
+package Game;
 /* This game is a classic text-based adventure set in a university environment.
    The player starts outside the main entrance and can navigate through different rooms like a
    lecture theatre, campus pub, computing lab, and admin office using simple text commands (e.g., "go east", "go west").
     The game provides descriptions of each location and lists possible exits.
 
 Key features include:
-Room navigation: Moving among interconnected rooms with named exits.
+Game.Room navigation: Moving among interconnected rooms with named exits.
 Simple command parser: Recognizes a limited set of commands like "go", "help", and "quit".
 Player character: Tracks current location and handles moving between rooms.
 Text descriptions: Provides immersive text output describing the player's surroundings and available options.
@@ -14,10 +15,12 @@ emphasizing exploration and simple command-driven gameplay
 */
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class ZorkULGame {
     private Parser parser;
-    public static Character player;
+    public static Game.Character player;
+    private ArrayList<Room> allRooms = new ArrayList<>();
 
     public ZorkULGame() {
         createRooms();
@@ -25,22 +28,64 @@ public class ZorkULGame {
     }
 
     private void createRooms() {
-        Room square, eskimo, jacks, grotto, dollar, cronins, ballintemple, rorys, whelans, nedkellys, clearys, longcourt, agartha;
 
-        // create rooms
-        square = new Room("in the square");
-        eskimo = new Room("in Eskimo Pizza");//12
-        jacks = new Room("in Jacks Pub");//1
-        dollar = new Room("in The Silver Dollar");//2
-        cronins = new Room("in Cronins Nightclub");//3
-        grotto = new Room("in Santa's grotto.");//4
-        ballintemple = new Room("in The Ballintemple.");//5
-        rorys = new Room("in Rorys house.");//6
-        whelans = new Room("in Whelans Pub.");//7
-        nedkellys = new Room("in Ned Kellys Bar.");//8
-        clearys = new Room("in Clearys.");//9
-        longcourt = new Room("in The Longcourt House Hotel.");//10
-        agartha = new Room("in Agartha.");//11
+        Room square        = new Room("the town square",
+                "You are standing in the bustling town square, the center of everything.");
+        Room eskimo        = new Room("Eskimo Pizza",
+                "You are inside Eskimo Pizza. The smell of fresh dough and melted cheese surrounds you.");
+        Room jacks         = new Room("Jack's Pub",
+                "You enter Jack’s Pub, a lively spot filled with chatter and clinking glasses.");
+        Room dollar        = new Room("The Silver Dollar",
+                "You are inside The Silver Dollar, a cosy pub with dim lights and friendly faces.");
+        Room cronins       = new Room("Cronin's Nightclub",
+                "You step into Cronin’s Nightclub, where the music pounds and lights flash wildly.");
+        Room grotto        = new Room("Santa’s Grotto",
+                "You find yourself in Santa’s Grotto, warm and festive with twinkling lights everywhere.");
+        Room ballintemple  = new Room("The Ballintemple",
+                "You are in The Ballintemple, a traditional bar with wooden stools and a roaring fire.");
+        Room rorys         = new Room("Rory’s House",
+                "You arrive at Rory’s house, a small, tidy home filled with personal touches.");
+        Room whelans       = new Room("Whelan’s Pub",
+                "You enter Whelan’s Pub, a relaxed place where the locals gather to talk.");
+        Room nedkellys     = new Room("Ned Kelly’s Bar",
+                "You step into Ned Kelly’s Bar, known for its lively atmosphere and strong drinks.");
+        Room clearys       = new Room("Cleary’s",
+                "You find yourself inside Cleary’s, a bright and welcoming pub.");
+        Room longcourt     = new Room("The Longcourt House Hotel",
+                "You are in the Longcourt House Hotel, elegant and comfortable with soft lighting.");
+        Room agartha       = new Room("Agartha",
+                "You descend into Agartha, a mysterious underground realm filled with ancient secrets.");
+
+        allRooms.add(square);
+        allRooms.add(eskimo);
+        allRooms.add(jacks);
+        allRooms.add(grotto);
+        allRooms.add(dollar);
+        allRooms.add(cronins);
+        allRooms.add(ballintemple);
+        allRooms.add(rorys);
+        allRooms.add(whelans);
+        allRooms.add(nedkellys);
+        allRooms.add(clearys);
+        allRooms.add(longcourt);
+        allRooms.add(agartha);
+
+        square.setMapPosition(3, 2);
+
+        eskimo.setMapPosition(2, 2);
+        jacks.setMapPosition(1, 2);
+        grotto.setMapPosition(0, 2);
+
+        ballintemple.setMapPosition(3, 1);
+        rorys.setMapPosition(3, 0);
+
+        nedkellys.setMapPosition(4, 2);
+        clearys.setMapPosition(5, 2);
+        longcourt.setMapPosition(5, 1);
+
+        dollar.setMapPosition(3, 3);
+        cronins.setMapPosition(3, 4);
+        whelans.setMapPosition(4, 3);
 
         square.setExit("west", eskimo);
         square.setExit("south", ballintemple);
@@ -79,82 +124,57 @@ public class ZorkULGame {
         longcourt.setExit("north", clearys);
 
         Item note = new Item("Note",
-                             "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
-                             "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. " +
-                                            "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
+                "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
+                "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. "
+                        + "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
 
-        DrinkItem jager = new DrinkItem(
-                "Jager",
+        DrinkItem jager = new DrinkItem("Jager",
                 "\nDrinking bottle of Jager:\n+ A bad idea.\n+ May die.\n+ Will never drink Jager again.",
-                "There seems to be Sam's blood on this. \"What was he doing?\""
-        );
+                "There seems to be Sam's blood on this. \"What was he doing?\"");
 
-        DrinkItem smithwicks = new DrinkItem(
-                "Smithwicks",
+        DrinkItem smithwicks = new DrinkItem("Smithwicks",
                 "\nDrinking smithwicks:\n+ Up the Dubs\n+ Dublin accent",
-                "A Smithwicks bottle. Classic."
-        );
+                "A Smithwicks bottle. Classic.");
 
-        DrinkItem guinness = new DrinkItem(
-                "Guinness",
+        DrinkItem guinness = new DrinkItem("Guinness",
                 "\nDrinking Guinness:\n = Drinking soup",
-                "The black shtuff"
-        );
+                "The black shtuff");
 
-        DrinkItem vodka = new DrinkItem(
-                "Vodka",
+        DrinkItem vodka = new DrinkItem("Vodka",
                 "\nDrinking vodka:\n+ Burning throat\n+ Instant regret",
-                "Good ol' Smirnoff"
-        );
+                "Good ol' Smirnoff");
 
-        DrinkItem coke = new DrinkItem(
-                "Coke",
+        DrinkItem coke = new DrinkItem("Coke",
                 "\nDrinking coke:\n+ Refreshment\n+ Look like a pussy\n+ Tastes Good",
-                "99% sure your friend put vodka in here"
-        );
+                "99% sure your friend put vodka in here");
 
-        DrinkItem cocktail = new DrinkItem(
-                "Cocktail",
+        DrinkItem cocktail = new DrinkItem("Cocktail",
                 "\nDrinking cocktail:\n+ Strawberry required \n+ Feeling a bit zesty",
-                "A pornstar martini. \n \"Who the fuck comes up with these names.\""
-        );
+                "A pornstar martini. \n \"Who the fuck comes up with these names.\"");
 
-        DrinkItem whiskey = new DrinkItem(
-                "Whiskey",
+        DrinkItem whiskey = new DrinkItem("Whiskey",
                 "\nDrinking whiskey:\n+ Warm chest\n+ Mumbling trad music imminent",
-                "The bottle is pristine, \"Is this LeHenny? I need a honey pack.\""
-        );
+                "The bottle is pristine, \"Is this LeHenny? I need a honey pack.\"");
 
-        DrinkItem jagerBomb = new DrinkItem(
-                "Jagerbomb",
+        DrinkItem jagerBomb = new DrinkItem("Jagerbomb",
                 "\nDrinking Jagerbomb:\n+ Strange visions\n+ Slight buzzing sound?\n+ Feeling rejuvinated",
-                "The condesnation on the can of RedBull tempts you."
-        );
+                "The condesnation on the can of RedBull tempts you.");
 
-        DrinkItem cider = new DrinkItem(
-                "Cider",
+        DrinkItem cider = new DrinkItem("Cider",
                 "\nDrinking cider:\n+ Sweetness\n+ Mild buzz\n+ Feel slightly fancy",
-                "Orchard Thieves, \"I feel 14 again\""
-        );
+                "Orchard Thieves, \"I feel 14 again\"");
 
-        DrinkItem sake = new DrinkItem(
-                "Sake",
+        DrinkItem sake = new DrinkItem("Sake",
                 "\nDrinking sake:\n+ Warm calm feeling\n+ Soft aftertaste\n+ Katana mastery",
-                "A delicate ceramic bottle with elegant brush strokes. \n \"Where the hell did this come from\""
-        );
+                "A delicate ceramic bottle with elegant brush strokes. \n \"Where the hell did this come from\"");
 
-        DrinkItem mead = new DrinkItem(
-                "Mead",
+        DrinkItem mead = new DrinkItem("Mead",
                 "\nDrinking mead:\n+ Blonde hair and blue eyes\n+ Viking spirit\n+ Hairy chest",
-                "A mason jar that has the label \"Mead\""
-        );
+                "A mason jar that has the label \"Mead\"");
 
-        DrinkItem moonshine = new DrinkItem(
-                "Moonshine",
+        DrinkItem moonshine = new DrinkItem("Moonshine",
                 "\nDrinking moonshine:\n+ Probably illegal\n+ Definitely dangerous\n+ Might go blind",
-                "The jar has no label. Just a hand-written warning: \"DONT.\""
-        );
-
+                "The jar has no label. Just a hand-written warning: \"DONT.\"");
 
         agartha.addItem(mead);
         jacks.addItem(guinness);
@@ -167,18 +187,30 @@ public class ZorkULGame {
         grotto.addItem(whiskey);
         clearys.addItem(coke);
         ballintemple.addItem(guinness);
-
         square.addItem(note);
 
-        player = new Character("player", square);
+        player = new Game.Character("player", square);
 
-        FriendlyNPC santa = new FriendlyNPC("Santa", "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"", grotto, "*Burps*");
-        MerchantNPC sam =  new MerchantNPC("Sam", " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\""
-                , longcourt, "Lets get litty in New Junk CITAY!", "Note", "Hey I just got scammed, I WANT MY JAGER BACK!");
+        FriendlyNPC santa = new FriendlyNPC("Santa",
+                "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"",
+                grotto,
+                "*Burps*");
+
+        MerchantNPC sam = new MerchantNPC("Sam",
+                " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\"",
+                longcourt,
+                "Lets get litty in New Junk CITAY!",
+                "Note",
+                "Hey I just got scammed, I WANT MY JAGER BACK!");
 
         grotto.addNPC(santa);
         longcourt.addNPC(sam);
         sam.addItem(jager);
+    }
+
+
+    public ArrayList<Room> getAllRooms() {
+        return allRooms;
     }
 
     public void play() {

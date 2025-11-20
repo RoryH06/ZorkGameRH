@@ -1,3 +1,5 @@
+package Game;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ public class CommandWords {
         validCommands.put("examine", "Examine an item in your inventory");
         validCommands.put("save", "Save the game");
         validCommands.put("resume", "Resume the game");
-        validCommands.put("trade", "Trade with an NPC");
+        validCommands.put("trade", "Trade with an Game.NPC");
         validCommands.put("drink", "Drink a beer");
     }
 

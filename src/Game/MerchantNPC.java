@@ -1,6 +1,8 @@
+package Game;
+
 import java.util.ArrayList;
 
-public class MerchantNPC extends NPC{
+public class MerchantNPC extends NPC {
     private String dialogue;
     private ArrayList<Item> inventory = new ArrayList<>();
     private String requiredItemName;
