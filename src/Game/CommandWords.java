@@ -21,6 +21,10 @@ public class CommandWords {
         validCommands.put("resume", "Resume the game");
         validCommands.put("trade", "Trade with an Game.NPC");
         validCommands.put("drink", "Drink a beer");
+        validCommands.put("open", "Open storage");
+        validCommands.put("code", "Enter a code");
+        validCommands.put("loot", "Loot an item from storage");
+        validCommands.put("run", "Go for a run");
     }
 
     public boolean isCommand(String commandWord) {

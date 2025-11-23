@@ -19,6 +19,17 @@ public class Character implements Serializable {
         this.inventory = new ArrayList<>();
     }
 
+    private boolean hungry = false;
+
+    public boolean isHungry() {
+        return hungry;
+    }
+
+    public void setHungry(boolean hungry) {
+        this.hungry = hungry;
+    }
+
+
     public String getName() {
         return name;
     }
@@ -102,5 +113,9 @@ public class Character implements Serializable {
 
     public boolean removeItem(Item item) {
         return inventory.remove(item);
+    }
+
+    public void addItem(Item item) {
+        inventory.add(item);
     }
 }

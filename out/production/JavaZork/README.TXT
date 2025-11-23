@@ -2,7 +2,7 @@ The new and enhanced Java text adventure should be used to illustrate many key J
 
 Object-oriented concepts: Classes, objects, inheritance, interfaces, polymorphism (e.g., different item types with subclassing).
 
-GUI programming: Swing or JavaFX interfaces for richer interaction.
+GUI.GUI programming: Swing or JavaFX interfaces for richer interaction.
 
 File I/O: Loading and saving game state or configurations.
 
@@ -25,7 +25,7 @@ Reflection: Dynamic class loading for mods or plugins.
 Annotations: Metadata for commands or game rules.
 
 Advanced:
-   Multithreading: Background tasks like timed events or NPC behaviors.
+   Multithreading: Background tasks like timed events or Game.NPC behaviors.
    Networking: Multiplayer functionalities or online leaderboards.
 
 
@@ -35,7 +35,7 @@ Add items and inventory: Allow players to pick up, use, and drop items scattered
 
 Introduce puzzles and challenges: Implement simple logic puzzles or locked doors requiring keys or solving riddles to progress.
 
-Create NPC characters: Add non-player characters with whom players can interact via dialogue, trading, or quests.
+Create Game.NPC characters: Add non-player characters with whom players can interact via dialogue, trading, or quests.
 
 Add scoring or objectives: Introduce goals like collecting certain items or reaching rooms within time or moves to give players purpose.
 

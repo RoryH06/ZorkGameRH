@@ -27,7 +27,7 @@ public class MerchantNPC extends NPC {
         Item requiredItem = player.findItemInInventory(requiredItemName);
 
         if (requiredItem == null) {
-            return name + " : You dont have a " + requiredItemName + ", come back with it.";
+            return " : You dont have " + requiredItemName + ", come back with it.";
         }
 
         if (inventory.isEmpty()) {

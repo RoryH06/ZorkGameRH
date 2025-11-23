@@ -21,6 +21,7 @@ public class ZorkULGame {
     private Parser parser;
     public static Game.Character player;
     private ArrayList<Room> allRooms = new ArrayList<>();
+    private Chest chestAwaitingCode = null;
 
     public ZorkULGame() {
         createRooms();
@@ -55,6 +56,8 @@ public class ZorkULGame {
                 "You are in the Longcourt House Hotel, elegant and comfortable with soft lighting.");
         Room agartha       = new Room("Agartha",
                 "You descend into Agartha, a mysterious underground realm filled with ancient secrets.");
+
+        eskimo.addCondition(new HungerCondition());
 
         allRooms.add(square);
         allRooms.add(eskimo);
@@ -123,6 +126,28 @@ public class ZorkULGame {
 
         longcourt.setExit("north", clearys);
 
+        Locker rorysLocker = new Locker("Locker",
+                "A tall metal locker with lots of stickers which spell \"RORY\"");
+
+        rorysLocker.addItem(new Item("NikeZoom",
+                "A nice turqoise and orange pair of running shoes.",
+                "These shoes are needed for running"));
+
+        Item  NikeZoom = new Item("NikeZoom",
+                "A nice turqoise and orange pair of running shoes.",
+                "These shoes are needed for running");
+
+        Chest goldChest = new Chest("0410",
+                                    "Gold Chest",
+                                    "\"The code is somebody's birthday who you hold dear to you.\"");
+
+        goldChest.addItem(new Item("MonopolyMoney",
+                "\n10 Monopoly Money. \n\"What the fuck am I supposed to do with Monopoly Money\"",
+                "You fondly remember the time you scammed Sam on monopoly."));
+
+        Item MonopolyMoney = new Item("MonopolyMoney",
+                                       "\n10 Monopoly Money. \"What the fuck am I supposed to do with Monopoly Money\"",
+                                       "\nYou fondly remember the time you scammed Sam on monopoly.");
         Item note = new Item("Note",
                 "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
                 "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. "
@@ -189,23 +214,33 @@ public class ZorkULGame {
         ballintemple.addItem(guinness);
         square.addItem(note);
 
+        square.setStorage(goldChest);
+        rorys.setStorage(rorysLocker);
+
         player = new Game.Character("player", square);
 
         FriendlyNPC santa = new FriendlyNPC("Santa",
                 "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"",
                 grotto,
-                "*Burps*");
+                "\"*Burps*\"");
 
         MerchantNPC sam = new MerchantNPC("Sam",
                 " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\"",
                 longcourt,
                 "Lets get litty in New Junk CITAY!",
-                "Note",
+                "MonopolyMoney",
                 "Hey I just got scammed, I WANT MY JAGER BACK!");
+
+        FriendlyNPC rory = new FriendlyNPC("Rory",
+                " It's your good friend Rory, studying at his desk so he doesn't fail his exams.",
+                rorys,
+                "\"Oh my god, what is up Declan! I'm just studying, man I'm so finished.\" " +
+                        "\n I think I need a break. Let's go for a run, it will build up your appetite and sober you up anyways.");
 
         grotto.addNPC(santa);
         longcourt.addNPC(sam);
         sam.addItem(jager);
+        rorys.addNPC(rory);
     }
 
 
@@ -273,6 +308,19 @@ public class ZorkULGame {
                 break;
             case "trade":
                 doTrade(command);
+                break;
+            case "run":
+                doRun(command);
+                break;
+            case "open":
+                openStorage(command);
+                break;
+            case "code":
+                enterCode(command);
+                break;
+            case "loot":
+                doLoot(command);
+                break;
             case "drink":
                 doDrink(command);
                 if (player.drinkCount() >= 12) {
@@ -359,26 +407,37 @@ public class ZorkULGame {
         }
 
         String direction = command.getSecondWord();
-
         Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
-        } else {
-            player.setCurrentRoom(nextRoom);
-            System.out.println(player.getCurrentRoom().getLongDescription());
+            return;
         }
+
+        String failMessage = nextRoom.checkConditions(player);
+        if (failMessage != null) {
+            System.out.println(failMessage);
+            return;
+        }
+
+        player.setCurrentRoom(nextRoom);
+        System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
-    public String go(String direction) { //for da gui
+    public String go(String direction) {
         Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
             return "There is no door!";
-        } else {
-            player.setCurrentRoom(nextRoom);
-            return player.getCurrentRoom().getLongDescription();
         }
+
+        String failMessage = nextRoom.checkConditions(player);
+        if (failMessage != null) {
+            return failMessage;
+        }
+
+        player.setCurrentRoom(nextRoom);
+        return player.getCurrentRoom().getLongDescription();
     }
 
     private void doInteract(Command command) {
@@ -503,6 +562,125 @@ public class ZorkULGame {
         };
     }
 
+    public void openStorage(Command command) {
+        Storage storage = player.getCurrentRoom().getStorage();
+
+        if (storage == null) {
+            System.out.println("There is no storage here to open.");
+            return;
+        }
+
+        System.out.println("You see a " + storage.getName() + ".");
+        System.out.println(storage.getDescription());
+
+        if (storage instanceof Chest) {
+            Chest chest = (Chest) storage;
+            if (chest.isLocked()) {
+                chestAwaitingCode = chest; // ✅ restore awaiting code
+                System.out.println("The chest is locked.");
+                System.out.println("Use: code ####");
+                return;
+            }
+        }
+
+        if (storage.getItems().isEmpty()) {
+            System.out.println("It is empty.");
+        } else {
+            System.out.println("Inside you find:");
+            for (Item item : storage.getItems()) {
+                System.out.println("- " + item.getName());
+            }
+        }
+    }
+
+    public void enterCode(Command command) {
+        if (chestAwaitingCode == null) {
+            System.out.println("There is nothing waiting for a code.");
+            return;
+        }
+
+        String attempt = command.getSecondWord();
+        if (attempt == null) {
+            System.out.println("What code?");
+            return;
+        }
+
+        if (chestAwaitingCode.tryCode(attempt)) {
+            Chest opened = chestAwaitingCode;
+            chestAwaitingCode = null;
+
+            System.out.println("You hear a click... the lock opens!");
+
+            if (opened.getItems().isEmpty()) {
+                System.out.println("The chest is empty.");
+            } else {
+                System.out.println("Inside you find:");
+                for (Item item : opened.getItems()) {
+                    System.out.println("- " + item.getName());
+                }
+            }
+        } else {
+            System.out.println("Incorrect code!");
+        }
+    }
+
+    public void doLoot(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Loot what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Storage storage = player.getCurrentRoom().getStorage();
+
+        if (storage == null) {
+            System.out.println("There is nothing here to loot.");
+            return;
+        }
+
+        storage.lootItem(itemName, player);
+    }
+
+    public void doRun(Command command) {
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Run with who?");
+            return;
+        }
+
+        if (!command.getSecondWord().equalsIgnoreCase("rory")) {
+            System.out.println("You can't run with " + command.getSecondWord() + ".");
+            return;
+        }
+
+        Room currentRoom = player.getCurrentRoom();
+
+        if (!currentRoom.getName().contains("Rory")) {
+            System.out.println("You can only run with rory from rorys");
+            return;
+        }
+
+        Item NikeZoom = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("NikeZoom")) {
+                NikeZoom = item;
+                break;
+            }
+        }
+
+        if (NikeZoom == null) {
+            System.out.println("You need Running Shoes to run.");
+            return;
+        }
+
+        player.getInventory().remove(NikeZoom);
+
+        player.setHungry(true);
+
+        System.out.println("You went on a run down the greenway with Rory, and you posted it on Strava.");
+        System.out.println("Your Running Shoes are worn out and discarded.");
+        System.out.println("You feel hungry after the run...");
+    }
 
     public static void main(String[] args) {
         ZorkULGame game = new ZorkULGame();
