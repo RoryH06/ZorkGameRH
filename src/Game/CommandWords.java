@@ -25,6 +25,7 @@ public class CommandWords {
         validCommands.put("code", "Enter a code");
         validCommands.put("loot", "Loot an item from storage");
         validCommands.put("run", "Go for a run");
+        validCommands.put("pose", "Pretend to be something you're not");
     }
 
     public boolean isCommand(String commandWord) {

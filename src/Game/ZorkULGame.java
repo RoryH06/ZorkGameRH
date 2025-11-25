@@ -58,6 +58,9 @@ public class ZorkULGame {
                 "You descend into Agartha, a mysterious underground realm filled with ancient secrets.");
 
         eskimo.addCondition(new HungerCondition());
+        grotto.addCondition(new ElfHatCondition());
+        ballintemple.addCondition(new BeerRequirementCondition(1));
+        cronins.addCondition(new BeerRequirementCondition(10));
 
         allRooms.add(square);
         allRooms.add(eskimo);
@@ -133,11 +136,7 @@ public class ZorkULGame {
                 "A nice turqoise and orange pair of running shoes.",
                 "These shoes are needed for running"));
 
-        Item  NikeZoom = new Item("NikeZoom",
-                "A nice turqoise and orange pair of running shoes.",
-                "These shoes are needed for running");
-
-        Chest goldChest = new Chest("0410",
+        Chest goldChest = new Chest("0410", //need to make it so when i say open locker in the square it doesnt try to open this. Open js does it, doesnt even check the second word.
                                     "Gold Chest",
                                     "\"The code is somebody's birthday who you hold dear to you.\"");
 
@@ -145,13 +144,33 @@ public class ZorkULGame {
                 "\n10 Monopoly Money. \n\"What the fuck am I supposed to do with Monopoly Money\"",
                 "You fondly remember the time you scammed Sam on monopoly."));
 
-        Item MonopolyMoney = new Item("MonopolyMoney",
-                                       "\n10 Monopoly Money. \"What the fuck am I supposed to do with Monopoly Money\"",
-                                       "\nYou fondly remember the time you scammed Sam on monopoly.");
+        Drawer dollarDrawer = new Drawer("Drawer",
+                "Theres a framed photo on the top sayin 'Free Pints tomorrow', \"I have a feeling tomorrow never comes...\"");
+
+        dollarDrawer.addItem(new Item("Elfhat",
+                "\nThere was a nice ElfHat on a cardboard cutout of Terry Crews in the dollar. It's green and red with a nice golden bobble",
+                "\n \"This really does make me look like an elf\""));
+
+        Item elfhat = new Item("Elfhat",
+                "\nThere was a nice ElfHat on a cardboard cutout of Terry Crews in the dollar. It's green and red with a nice golden bobble",
+                "\n \"This really does make me look like an elf\"");
+
         Item note = new Item("Note",
                 "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
                 "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. "
                         + "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
+
+        Item teleporter = new Item("Teleporter",
+                "Hayden seems to have developed some kind of teleporter.",
+                "\"'AscensionToAgartha-4000', thats a peculiar name\"");
+
+        Item stamp = new Item("CroninsStamp",
+                "A ticket to get yourself a stamp from Cronins",
+                "It just says *Non-Refundable*");
+
+        Item boogersugar = new Item("BoogerSugar",
+                "\"You'd think Santa would at least try to hide his addictions from Mrs.Claus, she should leave him.\"",
+                "A bag that has a label saying \"Santas infamous sniff\"");
 
         DrinkItem jager = new DrinkItem("Jager",
                 "\nDrinking bottle of Jager:\n+ A bad idea.\n+ May die.\n+ Will never drink Jager again.",
@@ -213,9 +232,11 @@ public class ZorkULGame {
         clearys.addItem(coke);
         ballintemple.addItem(guinness);
         square.addItem(note);
+        grotto.addItem(boogersugar);
 
         square.setStorage(goldChest);
         rorys.setStorage(rorysLocker);
+        dollar.setStorage(dollarDrawer);
 
         player = new Game.Character("player", square);
 
@@ -223,6 +244,13 @@ public class ZorkULGame {
                 "A grotesquely overweight, yet jolly man. \n\"Is Santa binge drinking Hennessy?\"",
                 grotto,
                 "\"*Burps*\"");
+
+        MerchantNPC croninsBouncer = new MerchantNPC("BigJohn",
+                "A big brollic man, he stands on the door of Cronins and is your biggest problem.",
+                dollar,
+                "Look lad I can't let you into here, youre barred, but dont say the anyone, *whispers* - get me some sniff and I'll stamp you in, we'll call it a 'trade'",
+                "BoogerSugar",
+                "Sound man, have a good night.");
 
         MerchantNPC sam = new MerchantNPC("Sam",
                 " He is on the floor, and doesn't seem to be too responsive. \n\"He seems to have drank WAY too much Jager, he couldn't finish the bottle in his hand. Poor guy.\"",
@@ -237,10 +265,21 @@ public class ZorkULGame {
                 "\"Oh my god, what is up Declan! I'm just studying, man I'm so finished.\" " +
                         "\n I think I need a break. Let's go for a run, it will build up your appetite and sober you up anyways.");
 
+        MerchantNPC hayden = new MerchantNPC("Hayden",
+                "Hes working hard, cheffing up some pizza in the brick over, what a GOAT",
+                eskimo,
+                "Gday mate, OI Dec! How're you getting on my son. If you see Sen will you tell him he has to feed the animals?",
+                "Note",
+                "Cheers matey, here's an old thing I put together myself 14 years ago. It might come in use for your challenge.");
+
         grotto.addNPC(santa);
         longcourt.addNPC(sam);
         sam.addItem(jager);
         rorys.addNPC(rory);
+        eskimo.addNPC(hayden);
+        hayden.addItem(teleporter);
+        dollar.addNPC(croninsBouncer);
+        croninsBouncer.addItem(stamp);
     }
 
 
@@ -315,6 +354,9 @@ public class ZorkULGame {
             case "open":
                 openStorage(command);
                 break;
+            case "pose":
+                doPose(command);
+                break;
             case "code":
                 enterCode(command);
                 break;
@@ -369,7 +411,6 @@ public class ZorkULGame {
             System.out.println("There is no item here!");
         } else {
             player.grabItem(czechItem, player.getCurrentRoom());
-            System.out.println("You have taken this item" + czechItem.getName());
         }
     }
 
@@ -680,6 +721,85 @@ public class ZorkULGame {
         System.out.println("You went on a run down the greenway with Rory, and you posted it on Strava.");
         System.out.println("Your Running Shoes are worn out and discarded.");
         System.out.println("You feel hungry after the run...");
+    }
+
+    public void doPose(Command command) {
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Pose with what?");
+            return;
+        }
+
+        if (!command.getSecondWord().equalsIgnoreCase("elfhat")) {
+            System.out.println("You can't pose with " + command.getSecondWord() + ".");
+            return;
+        }
+
+        Room currentRoom = player.getCurrentRoom();
+
+        if (!currentRoom.getName().contains("Jack")) {
+            System.out.println("You can only pose from Jack's");
+            return;
+        }
+
+        Item elfhat = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("ElfHat")) {
+                elfhat = item;
+                break;
+            }
+        }
+
+        if (elfhat == null) {
+            System.out.println("You need an ElfHat to pose.");
+            return;
+        }
+
+        player.getInventory().remove(elfhat);
+
+        player.setElfHat(true);
+
+        System.out.println("You put the ElfHat on your head.");
+        System.out.println("You did a cheeky jig for the elf on the door.He moaned as the door open. He looked an awful lot like Senan.");
+    }
+
+    public void getStamp(Command command) {
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Stamp what?");
+            return;
+        }
+
+        if (!command.getSecondWord().equalsIgnoreCase("stamp")) {
+            System.out.println("You can't stamp a " + command.getSecondWord() + ".");
+            return;
+        }
+
+        Room currentRoom = player.getCurrentRoom();
+
+        if (!currentRoom.getName().contains("Dollar")) {
+            System.out.println("You can only get stamped outside of Cronins");
+            return;
+        }
+
+        Item stamp = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("Stamp")) {
+                stamp = item;
+                break;
+            }
+        }
+
+        if (stamp == null) {
+            System.out.println("You need a stamp to stamp.");
+            return;
+        }
+
+        player.getInventory().remove(stamp);
+
+        player.setCroninsstamp(true);
+
+        System.out.println("You got your arm stamped with the Cronins logo in black ink.");
     }
 
     public static void main(String[] args) {

@@ -2,7 +2,7 @@ package Game;
 
 import java.util.ArrayList;
 
-public class Storage {
+public abstract class Storage {
     protected String name;
     protected String description;
     protected ArrayList<Item> items = new ArrayList<>();

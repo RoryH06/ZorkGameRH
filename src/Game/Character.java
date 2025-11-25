@@ -29,6 +29,23 @@ public class Character implements Serializable {
         this.hungry = hungry;
     }
 
+    private boolean croninsstamp = false;
+
+    public boolean hasStamp() {return croninsstamp;}
+
+    public void setCroninsstamp(boolean croninsstamp) {
+        this.croninsstamp = croninsstamp;
+    }
+
+    private boolean elfhat = false;
+
+    public boolean isWearingElfHat() {
+        return elfhat;
+    }
+
+    public void setElfHat(boolean elfhat) {
+        this.elfhat = elfhat;
+    }
 
     public String getName() {
         return name;
@@ -56,12 +73,10 @@ public class Character implements Serializable {
         }
     }
 
-    // --- Look around the current room ---
     public void lookAround() {
         System.out.println(currentRoom.getLongDescription());
     }
 
-    // --- Inventory management ---
     public void showInventory() {
         if (inventory.isEmpty()) {
             System.out.println("You are not carrying anything.");
@@ -108,7 +123,10 @@ public class Character implements Serializable {
             return;
         }
 
+    }
 
+    public int getDrinkCount() {
+        return drinkCount;
     }
 
     public boolean removeItem(Item item) {
