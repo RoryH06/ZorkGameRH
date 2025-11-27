@@ -14,6 +14,10 @@ public class Parser {
     public Command getCommand() {
         System.out.print("> ");
         String inputLine = reader.nextLine();
+        return getCommand(inputLine);
+    }
+
+    public Command getCommand(String inputLine) {
 
         String word1 = null;
         String word2 = null;

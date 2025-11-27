@@ -1,5 +1,7 @@
 package Game;
 
+import Conditions.RoomCondition;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +15,7 @@ public class Room implements Serializable {
     private ArrayList<Item> items;
     private ArrayList<NPC> npcs;
     private List<RoomCondition> conditions = new ArrayList<>();
-    private Storage storage;   // 🔄 generic storage instead of Chest
+    private Map<String, Storage>  storages;
     private int mapX;
     private int mapY;
 
@@ -23,6 +25,7 @@ public class Room implements Serializable {
         exits = new HashMap<>();
         items = new ArrayList<>();
         npcs = new ArrayList<>();
+        storages = new HashMap<>();
     }
 
     public String getName() {
@@ -51,7 +54,7 @@ public class Room implements Serializable {
                 return c.getFailureMessage();
             }
         }
-        return null;  // all conditions passed
+        return null;
     }
 
     public String getExitString() {
@@ -97,16 +100,19 @@ public class Room implements Serializable {
             }
         }
 
-        if (storage == null) {
+        if (storages == null) {
             System.out.println("There's no storage unit here.");
         } else {
-            System.out.println("There is a " + storage.getName() + " here.");
-            System.out.println(storage.getDescription());
+            System.out.println("There is: ");
+            for (String name : storages.keySet()) {
+                System.out.println(" - " + storages.get(name).getName());
+
+            }
         }
     }
 
     public String getLongDescription() {
-        return "You are " + description + ".\nExits: " + getExitString();
+        return description + ".\nExits: " + getExitString();
     }
 
     public void setMapPosition(int x, int y) {
@@ -122,12 +128,15 @@ public class Room implements Serializable {
         return mapY;
     }
 
-    // 🔄 Generic storage setter/getter
-    public void setStorage(Storage storage) {
-        this.storage = storage;
+    public void addStorage(String name, Storage storage) {
+        storages.put(name.toLowerCase(), storage);
     }
 
-    public Storage getStorage() {
-        return storage;
+    public Storage getStorage(String name) {
+        return storages.get(name.toLowerCase());
     }
+
+    public Map<String, Storage> getStorages() {
+        return storages;
+        }
 }

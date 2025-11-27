@@ -1,10 +1,10 @@
 package Game;
 
-public class Chest extends Storage {
+public class LockedStorage extends Storage {
     private String code;
     private boolean locked = true;
 
-    public Chest(String code, String name, String description) {
+    public LockedStorage(String code, String name, String description) {
         this.code = code;
         this.name = name;
         this.description = description;

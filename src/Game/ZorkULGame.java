@@ -14,6 +14,8 @@ Overall, it recreates the classic Zork interactive fiction experience with a uni
 emphasizing exploration and simple command-driven gameplay
 */
 
+import Conditions.*;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ public class ZorkULGame {
     private Parser parser;
     public static Game.Character player;
     private ArrayList<Room> allRooms = new ArrayList<>();
-    private Chest chestAwaitingCode = null;
+    private LockedStorage chestAwaitingCode = null;
 
     public ZorkULGame() {
         createRooms();
@@ -55,12 +57,17 @@ public class ZorkULGame {
         Room longcourt     = new Room("The Longcourt House Hotel",
                 "You are in the Longcourt House Hotel, elegant and comfortable with soft lighting.");
         Room agartha       = new Room("Agartha",
-                "You descend into Agartha, a mysterious underground realm filled with ancient secrets.");
+                "You ascended to Agartha.");
 
         eskimo.addCondition(new HungerCondition());
         grotto.addCondition(new ElfHatCondition());
+        rorys.addCondition(new RorysKeysCondition());
+        cronins.addCondition(new CroninsStampCondition());
         ballintemple.addCondition(new BeerRequirementCondition(1));
+        whelans.addCondition(new BeerRequirementCondition(2));
+        longcourt.addCondition(new BeerRequirementCondition(9));
         cronins.addCondition(new BeerRequirementCondition(10));
+        nedkellys.addCondition(new EasyPickinsCondition());
 
         allRooms.add(square);
         allRooms.add(eskimo);
@@ -129,31 +136,54 @@ public class ZorkULGame {
 
         longcourt.setExit("north", clearys);
 
-        Locker rorysLocker = new Locker("Locker",
-                "A tall metal locker with lots of stickers which spell \"RORY\"");
+        OpenStorage cellar= new OpenStorage("Cellar",
+                "A dark mysterious door that seems to be part of the wall is cracked open.");
+        ballintemple.addStorage("Cellar", cellar);
 
-        rorysLocker.addItem(new Item("NikeZoom",
-                "A nice turqoise and orange pair of running shoes.",
+        ballintemple.getStorage("Cellar").addItem(new Item("BOSSChain",
+                "\nA blinged out chain, 14kt gold with lots of diamonds encrusted on it.",
+                "If you wear this, they will not want to mess with you."));
+
+        OpenStorage rorysLocker = new OpenStorage("Locker",
+                "A tall metal locker with lots of stickers which spell \"RORY\"");
+        rorys.addStorage("Locker", rorysLocker);
+
+        rorys.getStorage("locker").addItem(new Item("NikeZoom",
+                "\nA nice turqoise and orange pair of running shoes.",
                 "These shoes are needed for running"));
 
-        Chest goldChest = new Chest("0410", //need to make it so when i say open locker in the square it doesnt try to open this. Open js does it, doesnt even check the second word.
-                                    "Gold Chest",
-                                    "\"The code is somebody's birthday who you hold dear to you.\"");
+        LockedStorage Chest = new LockedStorage("0410",
+                "Chest",
+                "\"The code is somebody's birthday who you hold dear to you.\"");
+        square.addStorage("Chest", Chest);
 
-        goldChest.addItem(new Item("MonopolyMoney",
+        square.getStorage("chest").addItem(new Item("MonopolyMoney",
                 "\n10 Monopoly Money. \n\"What the fuck am I supposed to do with Monopoly Money\"",
                 "You fondly remember the time you scammed Sam on monopoly."));
 
-        Drawer dollarDrawer = new Drawer("Drawer",
+        square.getStorage("chest").addItem(new Item("Teleporter",
+                "\nThis seems to be some kind of teleporter.",
+                "\"'AscensionToAgartha-4000', thats a peculiar name\""));
+
+        square.getStorage("chest").addItem(new Item("Tenner",
+                "\n\"Mmmmmm 2 more pints.\"",
+                "It is definitely forged. \"FUCK\""));
+
+        OpenStorage dollarDrawer = new OpenStorage("Drawer",
                 "Theres a framed photo on the top sayin 'Free Pints tomorrow', \"I have a feeling tomorrow never comes...\"");
+        dollar.addStorage("Drawer", dollarDrawer);
 
-        dollarDrawer.addItem(new Item("Elfhat",
+        dollar.getStorage("drawer").addItem(new Item("Elfhat",
                 "\nThere was a nice ElfHat on a cardboard cutout of Terry Crews in the dollar. It's green and red with a nice golden bobble",
-                "\n \"This really does make me look like an elf\""));
+                "\"This really does make me look like an elf\""));
 
-        Item elfhat = new Item("Elfhat",
-                "\nThere was a nice ElfHat on a cardboard cutout of Terry Crews in the dollar. It's green and red with a nice golden bobble",
-                "\n \"This really does make me look like an elf\"");
+        OpenStorage shed = new OpenStorage("Shed",
+                "An old fashioned shed, the door seems to be cracked.");
+        jacks.addStorage("Shed", shed);
+
+        jacks.getStorage("shed").addItem(new Item("AussieFootie",
+                "\nA nice, round, slightly deflated pigskin.",
+                "You see a faded name on the side, \"HAYDEN\""));
 
         Item note = new Item("Note",
                 "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
@@ -161,15 +191,19 @@ public class ZorkULGame {
                         + "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
 
         Item teleporter = new Item("Teleporter",
-                "Hayden seems to have developed some kind of teleporter.",
+                "\nThis seems to be some kind of teleporter.",
                 "\"'AscensionToAgartha-4000', thats a peculiar name\"");
 
+        Item rorysKeys = new Item("RorysKeys",
+                "\nA dirty set of keys you found on the floor. There is a lot of porsche car keys for some reason.",
+                "A set of keys with the writing on a tag saying: \"If lost please return to V42 W722\"");
+
         Item stamp = new Item("CroninsStamp",
-                "A ticket to get yourself a stamp from Cronins",
+                "\nA ticket to get yourself a stamp from Cronins",
                 "It just says *Non-Refundable*");
 
         Item boogersugar = new Item("BoogerSugar",
-                "\"You'd think Santa would at least try to hide his addictions from Mrs.Claus, she should leave him.\"",
+                "\n\"You'd think Santa would at least try to hide his addictions from Mrs.Claus, she should leave him.\"",
                 "A bag that has a label saying \"Santas infamous sniff\"");
 
         DrinkItem jager = new DrinkItem("Jager",
@@ -221,22 +255,18 @@ public class ZorkULGame {
                 "The jar has no label. Just a hand-written warning: \"DONT.\"");
 
         agartha.addItem(mead);
-        jacks.addItem(guinness);
+        jacks.addItem(coke);
         nedkellys.addItem(vodka);
         rorys.addItem(sake);
-        eskimo.addItem(cocktail);
         dollar.addItem(moonshine);
         cronins.addItem(jagerBomb);
         whelans.addItem(cider);
         grotto.addItem(whiskey);
-        clearys.addItem(coke);
+        clearys.addItem(smithwicks);
         ballintemple.addItem(guinness);
         square.addItem(note);
         grotto.addItem(boogersugar);
-
-        square.setStorage(goldChest);
-        rorys.setStorage(rorysLocker);
-        dollar.setStorage(dollarDrawer);
+        clearys.addItem(rorysKeys);
 
         player = new Game.Character("player", square);
 
@@ -263,23 +293,34 @@ public class ZorkULGame {
                 " It's your good friend Rory, studying at his desk so he doesn't fail his exams.",
                 rorys,
                 "\"Oh my god, what is up Declan! I'm just studying, man I'm so finished.\" " +
-                        "\n I think I need a break. Let's go for a run, it will build up your appetite and sober you up anyways.");
+                        "\n I think I need a break. Let's go for a run, it will build up your appetite and sober you up anyways, but first we gotta drink some Sake.");
 
         MerchantNPC hayden = new MerchantNPC("Hayden",
                 "Hes working hard, cheffing up some pizza in the brick over, what a GOAT",
                 eskimo,
                 "Gday mate, OI Dec! How're you getting on my son. If you see Sen will you tell him he has to feed the animals?",
-                "Note",
-                "Cheers matey, here's an old thing I put together myself 14 years ago. It might come in use for your challenge.");
+                "AussieFootie",
+                "Cheers matey, here's a drink to add to the tally, feelin' a little zesty today");
+
+        MerchantNPC johnny = new MerchantNPC(
+                "Johnny",
+                "\"How the fuck did he get in here and I nearly wasn't allowed. At least he has a Christmas jumper I guess.\"",
+                cronins,
+                "Oi bro, can I have a tenner for a hostel.",
+                "Tenner",
+                "Thanks, pal. That'll get me warm for the night. Take this yoke, it tells me I am not welcome for ascension."
+        );
 
         grotto.addNPC(santa);
         longcourt.addNPC(sam);
         sam.addItem(jager);
         rorys.addNPC(rory);
         eskimo.addNPC(hayden);
-        hayden.addItem(teleporter);
+        hayden.addItem(cocktail);
         dollar.addNPC(croninsBouncer);
         croninsBouncer.addItem(stamp);
+        cronins.addNPC(johnny);
+        johnny.addItem(teleporter);
     }
 
 
@@ -306,7 +347,7 @@ public class ZorkULGame {
         System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
-    private boolean processCommand(Command command) {
+    public boolean processCommand(Command command) {
         String commandWord = command.getCommandWord();
 
         if (commandWord == null) {
@@ -336,6 +377,9 @@ public class ZorkULGame {
             case "examine":
                 examineItem(command);
                 break;
+            case "teleport":
+                doTeleport(command);
+                break;
             case "inventory":
                 player.showInventory();
                 break;
@@ -362,6 +406,15 @@ public class ZorkULGame {
                 break;
             case "loot":
                 doLoot(command);
+                break;
+            case "stamp":
+                getStamp(command);
+                break;
+            case "use":
+                doUse(command);
+                break;
+            case "equip":
+                doEquip(command);
                 break;
             case "drink":
                 doDrink(command);
@@ -441,7 +494,7 @@ public class ZorkULGame {
         }
     }
 
-    private void goRoom(Command command) {
+    public void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
@@ -463,22 +516,6 @@ public class ZorkULGame {
 
         player.setCurrentRoom(nextRoom);
         System.out.println(player.getCurrentRoom().getLongDescription());
-    }
-
-    public String go(String direction) {
-        Room nextRoom = player.getCurrentRoom().getExit(direction);
-
-        if (nextRoom == null) {
-            return "There is no door!";
-        }
-
-        String failMessage = nextRoom.checkConditions(player);
-        if (failMessage != null) {
-            return failMessage;
-        }
-
-        player.setCurrentRoom(nextRoom);
-        return player.getCurrentRoom().getLongDescription();
     }
 
     private void doInteract(Command command) {
@@ -593,18 +630,26 @@ public class ZorkULGame {
     }
 
     public String processGuiCommand(String input) {
-        String[] words = input.split(" ", 2);
-        String command = words[0].toLowerCase();
-        String arg = words.length > 1 ? words[1] : null;
+        Parser parser = new Parser(); // or however you parse text
+        Command command = parser.getCommand(input);
 
-        return switch (command) {
-            case "go" -> go(arg);
-            default -> "I don't know what you mean...";
-        };
+        boolean finished = processCommand(command);
+
+        if (finished) {
+            return "Game Over.";
+        }
+        return ""; // or return whatever text your processCommand prints
     }
 
     public void openStorage(Command command) {
-        Storage storage = player.getCurrentRoom().getStorage();
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Open what?");
+            return;
+        }
+
+        String targetName = command.getSecondWord().toLowerCase();
+        Storage storage = player.getCurrentRoom().getStorage(targetName);
 
         if (storage == null) {
             System.out.println("There is no storage here to open.");
@@ -614,10 +659,10 @@ public class ZorkULGame {
         System.out.println("You see a " + storage.getName() + ".");
         System.out.println(storage.getDescription());
 
-        if (storage instanceof Chest) {
-            Chest chest = (Chest) storage;
+        if (storage instanceof LockedStorage) {
+            LockedStorage chest = (LockedStorage) storage;
             if (chest.isLocked()) {
-                chestAwaitingCode = chest; // ✅ restore awaiting code
+                chestAwaitingCode = chest;
                 System.out.println("The chest is locked.");
                 System.out.println("Use: code ####");
                 return;
@@ -647,7 +692,7 @@ public class ZorkULGame {
         }
 
         if (chestAwaitingCode.tryCode(attempt)) {
-            Chest opened = chestAwaitingCode;
+            LockedStorage opened = chestAwaitingCode;
             chestAwaitingCode = null;
 
             System.out.println("You hear a click... the lock opens!");
@@ -672,16 +717,17 @@ public class ZorkULGame {
         }
 
         String itemName = command.getSecondWord();
-        Storage storage = player.getCurrentRoom().getStorage();
+        Room currentRoom = player.getCurrentRoom();
 
-        if (storage == null) {
+        if (currentRoom.getStorages().isEmpty()) {
             System.out.println("There is nothing here to loot.");
             return;
         }
 
+        Storage storage = currentRoom.getStorages().values().iterator().next();
+
         storage.lootItem(itemName, player);
     }
-
     public void doRun(Command command) {
 
         if (!command.hasSecondWord()) {
@@ -784,7 +830,7 @@ public class ZorkULGame {
 
         Item stamp = null;
         for (Item item : player.getInventory()) {
-            if (item.getName().equalsIgnoreCase("Stamp")) {
+            if (item.getName().equalsIgnoreCase("CroninsStamp")) {
                 stamp = item;
                 break;
             }
@@ -800,6 +846,195 @@ public class ZorkULGame {
         player.setCroninsstamp(true);
 
         System.out.println("You got your arm stamped with the Cronins logo in black ink.");
+    }
+
+    public void doUse(Command command) {
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Unlock with what?");
+            return;
+        }
+
+        if (!command.getSecondWord().equalsIgnoreCase("roryskeys")) {
+            System.out.println("You can't unlock with " + command.getSecondWord() + ".");
+            return;
+        }
+
+        Room currentRoom = player.getCurrentRoom();
+
+        if (!currentRoom.getName().contains("Ballintemple")) {
+            System.out.println("You can only unlock Rory's front door from the ballintemple.");
+            return;
+        }
+
+        Item rorysKeys = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("RorysKeys")) {
+                rorysKeys = item;
+                break;
+            }
+        }
+
+        if (rorysKeys == null) {
+            System.out.println("You need RorysKeys to open the door.");
+            return;
+        }
+
+        player.getInventory().remove(rorysKeys);
+
+        player.setRoryskeys(true);
+
+        System.out.println("You put the keys in the door and twist..");
+        System.out.println("It opens with ease and as you open the door you're blessed with the beautiful aroma of JPG Elixir.");
+        System.out.println("You return RorysKeys to him");
+    }
+
+    public void doEquip(Command command) {
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Equip what?");
+            return;
+        }
+
+        if (!command.getSecondWord().equalsIgnoreCase("bosschain")) {
+            System.out.println("You cant equip a " + command.getSecondWord() + ".");
+            return;
+        }
+
+        Room currentRoom = player.getCurrentRoom();
+
+        if (!currentRoom.getName().contains("Whelan")) {
+            System.out.println("You can only wear the chain before you go into Ned Kellys or else you look like a twat.");
+            return;
+        }
+
+        Item bossChain = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("BOSSChain")) {
+                bossChain = item;
+                break;
+            }
+        }
+
+        if (bossChain == null) {
+            System.out.println("You need a BOSSChain to equip.");
+            return;
+        }
+
+        player.getInventory().remove(bossChain);
+
+        player.setBosschain(true);
+
+        System.out.println("You put on the BOSSChain and all of a sudden your hair is slipped back...");
+        System.out.println("Everyone flinches as you enter because your aura is overwhelming. Nobody wants to mess with you.");
+    }
+
+    public void doTeleport(Command command) {
+        Item teleporter = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase("Teleporter")) {
+                teleporter = item;
+                break;
+            }
+        }
+
+        if (teleporter == null) {
+            System.out.println("You don't have the Teleporter. You cannot teleport.");
+            return;
+        }
+
+        if (command.hasSecondWord()) {
+            System.out.println("Just say 'teleport' to use the Teleporter.");
+            return;
+        }
+
+        Room agartha = null;
+        for (Room room : allRooms) {
+            if (room.getName().equalsIgnoreCase("Agartha")) {
+                agartha = room;
+                break;
+            }
+        }
+
+        if (agartha == null) {
+            System.out.println("Agartha room does not exist!");
+            return;
+        }
+
+        player.getInventory().remove(teleporter);
+        player.setCurrentRoom(agartha);
+
+        try {
+            System.out.println("At last… after all this time… after stumbling through taverns, alleys, forgotten dungeons, questionable kitchens," +
+                    "\ncursed breweries, and that one pub where the floor was sticky for reasons no mortal should ponder… you finally stand here.");
+            Thread.sleep(3000);
+
+            System.out.println("Agartha.");
+            Thread.sleep(2000);
+
+            System.out.println("The final area. The end of the journey. The bottom of the barrel… but also the pinnacle of legend.");
+            Thread.sleep(2800);
+
+            System.out.println("Your head is spinning. Your legs feel like they were forged from wobbly noodles. You’ve drunk things no sane adventurer would ever combine in one lifetime, let alone in one night.");
+            Thread.sleep(3500);
+
+            System.out.println("You’ve tasted glory, despair, mild poisoning, and that drink with the umbrella in it that definitely should not have had an umbrella in it.");
+            Thread.sleep(3500);
+
+            System.out.println("You should have passed out hours ago. By all known laws of biology, physics, and good decision-making, you should currently be unconscious in a ditch behind Pub Seven.");
+            Thread.sleep(4000);
+
+            System.out.println("And yet… somehow… you endure.");
+            Thread.sleep(2500);
+
+            System.out.println("The air here is thick with mystery. Or maybe that’s just the smell of spilt ale baked into the ancient stone. It’s getting hard to tell.");
+            Thread.sleep(3500);
+
+            System.out.println("Your vision swims. The walls shimmer. The floor breathes. You’re not entirely convinced you haven’t imagined this place.");
+            Thread.sleep(3500);
+
+            System.out.println("It's possible you're lying facedown in a hallway somewhere hallucinating a secret realm.");
+            Thread.sleep(3300);
+
+            System.out.println("But even if you are… what a hallucination.");
+            Thread.sleep(2500);
+
+            System.out.println("Only one pub remains. One final drink. One last heroic, idiotic, magnificent step before you complete the legendary Twelve Pubs Challenge and ascend into the pantheon of absolute madlads.");
+            Thread.sleep(5000);
+
+            System.out.println("Every muscle trembles. Your heartbeat sounds like a tavern drum being played by someone who has had far too much mead.");
+            Thread.sleep(3500);
+
+            System.out.println("Your thoughts are foggy—thick as the stout from Pub Four. But deep inside, beneath the exhaustion, beneath the dizziness, beneath the questionable decisions… a fire still burns.");
+            Thread.sleep(4500);
+
+            System.out.println("You’re going to make it.");
+            Thread.sleep(2000);
+
+            System.out.println("Even if the ground is currently tilting. Even if you’re seeing two doors when there should be one.");
+            Thread.sleep(3000);
+
+            System.out.println("Even if you’re not entirely sure Agartha is real and not the product of whatever was in that glowing bottle from Pub Ten.");
+            Thread.sleep(4000);
+
+            System.out.println("You press forward, because heroes don’t quit. Heroes don’t fall. Heroes may stumble, trip, argue with furniture, and briefly forget their own name… but they do not quit.");
+            Thread.sleep(5000);
+
+            System.out.println("And tonight—whether this is reality, a dream, or a hallucination written by a drunk wizard—you are a hero.");
+            Thread.sleep(3500);
+
+            System.out.println("The final drink awaits.");
+            Thread.sleep(2500);
+
+            System.out.println("May your stomach hold firm. May your liver forgive you. May you remain conscious long enough to see the credits roll.");
+            Thread.sleep(4000);
+
+            System.out.println("Welcome… to Agartha.");
+            Thread.sleep(2500);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public static void main(String[] args) {

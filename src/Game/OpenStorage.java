@@ -1,8 +1,8 @@
 package Game;
 
-public class Drawer extends Storage {
+public class OpenStorage extends Storage {
 
-    public Drawer(String name, String description) {
+    public OpenStorage(String name, String description) {
         this.name = name;
         this.description = description;
     }

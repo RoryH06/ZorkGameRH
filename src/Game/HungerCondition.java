@@ -1,5 +1,7 @@
 package Game;
 
+import Conditions.RoomCondition;
+
 public class HungerCondition implements RoomCondition {
 
     @Override

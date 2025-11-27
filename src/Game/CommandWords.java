@@ -26,6 +26,10 @@ public class CommandWords {
         validCommands.put("loot", "Loot an item from storage");
         validCommands.put("run", "Go for a run");
         validCommands.put("pose", "Pretend to be something you're not");
+        validCommands.put("stamp", "get your cronins stamp");
+        validCommands.put("use", "perhaps you can use somebody's keys to unlock a door.");
+        validCommands.put("equip", "equip some vanity");
+        validCommands.put("teleport" , "teleport to an unknown realm");
     }
 
     public boolean isCommand(String commandWord) {

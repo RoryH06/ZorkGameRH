@@ -31,7 +31,9 @@ public class Character implements Serializable {
 
     private boolean croninsstamp = false;
 
-    public boolean hasStamp() {return croninsstamp;}
+    public boolean hasStamp() {
+        return croninsstamp;
+    }
 
     public void setCroninsstamp(boolean croninsstamp) {
         this.croninsstamp = croninsstamp;
@@ -47,9 +49,27 @@ public class Character implements Serializable {
         this.elfhat = elfhat;
     }
 
-    public String getName() {
-        return name;
+    private boolean roryskeys = false;
+
+    public boolean isHoldingKeys() {
+        return roryskeys;
     }
+
+    public void setRoryskeys(boolean roryskeys) {
+        this.roryskeys = roryskeys;
+    }
+
+    private boolean bosschain = false;
+
+    public boolean isWearingBOSSChain() {
+        return bosschain;
+    }
+
+    public void setBosschain(boolean bosschain) {
+        this.bosschain = bosschain;
+    }
+
+    public String getName() {return name;}
 
     public Room getCurrentRoom() {
         return currentRoom;

@@ -1,4 +1,6 @@
-package Game;
+package Conditions;
+
+import Game.Character;
 
 public class ElfHatCondition implements RoomCondition {
 

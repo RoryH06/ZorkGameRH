@@ -23,9 +23,9 @@ public abstract class Storage {
         return description;
     }
 
-    public Item lootItem(String itemName, Character character) {
+    public Item lootItem(String targetName, Character character) {
         for (Item item : items) {
-            if (item.getName().equalsIgnoreCase(itemName)) {
+            if (item.getName().equalsIgnoreCase(targetName)) {
                 items.remove(item);
                 character.addItem(item); // adds to Character’s inventory
                 System.out.println("You loot " + item.getName() + " from the " + name + ".");
