@@ -6,7 +6,7 @@ public class CroninsStampCondition implements RoomCondition {
 
     @Override
     public boolean canEnter(Character player) {
-        return player.hasStamp();   // you define this in Player
+        return player.hasStamp();
     }
 
     @Override

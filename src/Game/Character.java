@@ -136,14 +136,14 @@ public class Character implements Serializable {
     public void increaseDrinkCount() {
         if (drinkCount < 12) {
             drinkCount++;
-        }
-        if (ZorkULGame.player.drinkCount() >= 12) {
-            System.out.println("\nYOU DID IT! You finished the 12 pubs of Christmas!");
-            System.out.println("You collapse on the ground, victorious and drunk beyond reason...");
-            return;
-        }
 
+            if (drinkCount == 12) {
+                System.out.println("\nYOU DID IT! You finished the 12 pubs of Christmas!");
+                System.out.println("You collapse on the ground, victorious and drunk beyond reason...");
+            }
+        }
     }
+
 
     public int getDrinkCount() {
         return drinkCount;

@@ -1,12 +1,12 @@
-package Game;
+package Conditions;
 
-import Conditions.RoomCondition;
+import Game.Character;
 
 public class HungerCondition implements RoomCondition {
 
     @Override
     public boolean canEnter(Character player) {
-        return player.isHungry();   // you define this in Player
+        return player.isHungry();
     }
 
     @Override

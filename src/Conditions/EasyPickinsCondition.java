@@ -6,7 +6,7 @@ public class EasyPickinsCondition implements RoomCondition {
 
     @Override
     public boolean canEnter(Character player) {
-        return player.isWearingBOSSChain();   // you define this in Player
+        return player.isWearingBOSSChain();
     }
 
     @Override

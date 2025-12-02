@@ -2,7 +2,7 @@ package Game;
 
 import java.util.Scanner;
 
-public class Parser {
+public class Parser{
     private CommandWords commands;
     private Scanner reader;
 

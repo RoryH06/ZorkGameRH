@@ -1,9 +1,10 @@
 package Game;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandWords {
+public class CommandWords implements Serializable {
     private Map<String, String> validCommands;
 
     public CommandWords() {

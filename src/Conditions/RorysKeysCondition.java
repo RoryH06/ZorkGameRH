@@ -2,11 +2,13 @@ package Conditions;
 
 import Game.Character;
 
+import java.io.Serializable;
+
 public class RorysKeysCondition implements RoomCondition {
 
     @Override
     public boolean canEnter(Character player) {
-        return player.isHoldingKeys();   // you define this in Player
+        return player.isHoldingKeys();  
     }
 
     @Override

@@ -19,9 +19,9 @@ import Conditions.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class ZorkULGame {
-    private Parser parser;
-    public static Game.Character player;
+public class ZorkULGame implements Serializable {
+    private final Parser parser;
+    public Game.Character player;
     private ArrayList<Room> allRooms = new ArrayList<>();
     private LockedStorage chestAwaitingCode = null;
 
@@ -58,6 +58,7 @@ public class ZorkULGame {
                 "You are in the Longcourt House Hotel, elegant and comfortable with soft lighting.");
         Room agartha       = new Room("Agartha",
                 "You ascended to Agartha.");
+        agartha.setTeleportDestination(TeleportDestination.AGARTHA);
 
         eskimo.addCondition(new HungerCondition());
         grotto.addCondition(new ElfHatCondition());
@@ -187,7 +188,7 @@ public class ZorkULGame {
 
         Item note = new Item("Note",
                 "\nThere seems to be some text on this bloody note, but you're partially blind so you cant see.",
-                "Welcome to 12 Pubs of christmas, hood edition. \nYou need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. "
+                "Welcome to 12 Pubs of christmas, hood edition. You need to drink 12 beers, and complete challenges in all pubs, before all the pubs close. "
                         + "There will be lots of evil, trying to stop you from completing 12 pubs. You will need to solve puzzles and make correct decisions. \n Best of luck soldier.");
 
         Item teleporter = new Item("Teleporter",
@@ -387,7 +388,7 @@ public class ZorkULGame {
                 saveGame("filename");
                 break;
             case "resume":
-                resumeGame("filename");
+                loadGame("filename");
                 break;
             case "trade":
                 doTrade(command);
@@ -467,8 +468,6 @@ public class ZorkULGame {
         }
     }
 
-
-
     private void dropItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Drop what? ");
@@ -476,7 +475,6 @@ public class ZorkULGame {
         }
 
         String itemName = command.getSecondWord();
-        Room currentRoom = player.getCurrentRoom();
         Item czechItem = null;
 
         for (Item item : player.getInventory()) {
@@ -501,7 +499,8 @@ public class ZorkULGame {
         }
 
         String direction = command.getSecondWord();
-        Room nextRoom = player.getCurrentRoom().getExit(direction);
+        Room current = player.getCurrentRoom();
+        Room nextRoom = current.getExit(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
@@ -515,7 +514,9 @@ public class ZorkULGame {
         }
 
         player.setCurrentRoom(nextRoom);
-        System.out.println(player.getCurrentRoom().getLongDescription());
+        System.out.println("You move " + direction + " into " + nextRoom.getName());
+        System.out.println("Coordinates: (" + nextRoom.getMapX() + "," + nextRoom.getMapY() + ")");
+        System.out.println(nextRoom.getLongDescription());
     }
 
     private void doInteract(Command command) {
@@ -560,22 +561,40 @@ public class ZorkULGame {
         }
     }
 
-    public void saveGame(String fileName) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+    public void saveGame(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
             out.writeObject(player);
-            System.out.println("Object has been serialized to" + fileName);
+            out.writeObject(allRooms);
+            System.out.println("Game saved successfully!");
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error saving game: " + e.getMessage());
         }
     }
 
-    public void resumeGame(String fileName) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+    @SuppressWarnings("unchecked")
+    public void loadGame(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
             player = (Character) in.readObject();
-            System.out.println("Object has been serialized to" + fileName);
-        } catch (IOException |  ClassNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            allRooms = (ArrayList<Room>) in.readObject();
+
+            Room loadedRoom = findRoomByName(player.getCurrentRoom().getName(), allRooms);
+            if (loadedRoom != null) {
+                player.setCurrentRoom(loadedRoom);
+            }
+
+            System.out.println("Game loaded successfully!");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading game: " + e.getMessage());
         }
+    }
+
+    private Room findRoomByName(String name, ArrayList<Room> rooms) {
+        for (Room r : rooms) {
+            if (r.getName().equals(name)) {
+                return r;
+            }
+        }
+        return null;
     }
 
     private void doTrade(Command command) {
@@ -592,11 +611,10 @@ public class ZorkULGame {
 
                 if (npc instanceof MerchantNPC merchant) {
                     System.out.println(merchant.trade(player, room));
-                    return;
                 } else {
                     System.out.println(npc.getName() + " is not a merchant.");
-                    return;
                 }
+                return;
             }
         }
 
@@ -630,7 +648,7 @@ public class ZorkULGame {
     }
 
     public String processGuiCommand(String input) {
-        Parser parser = new Parser(); // or however you parse text
+        Parser parser = new Parser();
         Command command = parser.getCommand(input);
 
         boolean finished = processCommand(command);
@@ -638,7 +656,7 @@ public class ZorkULGame {
         if (finished) {
             return "Game Over.";
         }
-        return ""; // or return whatever text your processCommand prints
+        return "";
     }
 
     public void openStorage(Command command) {
@@ -659,8 +677,7 @@ public class ZorkULGame {
         System.out.println("You see a " + storage.getName() + ".");
         System.out.println(storage.getDescription());
 
-        if (storage instanceof LockedStorage) {
-            LockedStorage chest = (LockedStorage) storage;
+        if (storage instanceof LockedStorage chest) {
             if (chest.isLocked()) {
                 chestAwaitingCode = chest;
                 System.out.println("The chest is locked.");
@@ -929,6 +946,16 @@ public class ZorkULGame {
         System.out.println("Everyone flinches as you enter because your aura is overwhelming. Nobody wants to mess with you.");
     }
 
+    private Room findRoomByTeleport(TeleportDestination dest) {
+        for (Room room : allRooms) {
+            if (room.getTeleportDestination() == dest) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+
     public void doTeleport(Command command) {
         Item teleporter = null;
         for (Item item : player.getInventory()) {
@@ -948,13 +975,7 @@ public class ZorkULGame {
             return;
         }
 
-        Room agartha = null;
-        for (Room room : allRooms) {
-            if (room.getName().equalsIgnoreCase("Agartha")) {
-                agartha = room;
-                break;
-            }
-        }
+        Room agartha = findRoomByTeleport(TeleportDestination.AGARTHA);
 
         if (agartha == null) {
             System.out.println("Agartha room does not exist!");
@@ -962,79 +983,79 @@ public class ZorkULGame {
         }
 
         player.getInventory().remove(teleporter);
+
         player.setCurrentRoom(agartha);
 
-        try {
-            System.out.println("At last… after all this time… after stumbling through taverns, alleys, forgotten dungeons, questionable kitchens," +
-                    "\ncursed breweries, and that one pub where the floor was sticky for reasons no mortal should ponder… you finally stand here.");
-            Thread.sleep(3000);
+        new Thread(() -> {
+            try {
+                System.out.println("At last… after all this time… you finally stand here.");
+                Thread.sleep(3000);
 
-            System.out.println("Agartha.");
-            Thread.sleep(2000);
+                System.out.println("Agartha.");
+                Thread.sleep(2000);
 
-            System.out.println("The final area. The end of the journey. The bottom of the barrel… but also the pinnacle of legend.");
-            Thread.sleep(2800);
+                System.out.println("The final area. The end of the journey...");
+                Thread.sleep(2800);
 
-            System.out.println("Your head is spinning. Your legs feel like they were forged from wobbly noodles. You’ve drunk things no sane adventurer would ever combine in one lifetime, let alone in one night.");
-            Thread.sleep(3500);
+                System.out.println("Your head is spinning. Your legs feel like they were forged from wobbly noodles. You’ve drunk things no sane adventurer would ever combine in one lifetime, let alone in one night.");
+                Thread.sleep(3500);
 
-            System.out.println("You’ve tasted glory, despair, mild poisoning, and that drink with the umbrella in it that definitely should not have had an umbrella in it.");
-            Thread.sleep(3500);
+                System.out.println("You’ve tasted glory, despair, mild poisoning, and that drink with the umbrella in it that definitely should not have had an umbrella in it.");
+                Thread.sleep(3500);
 
-            System.out.println("You should have passed out hours ago. By all known laws of biology, physics, and good decision-making, you should currently be unconscious in a ditch behind Pub Seven.");
-            Thread.sleep(4000);
+                System.out.println("You should have passed out hours ago. By all known laws of biology, physics, and good decision-making, you should currently be unconscious in a ditch behind Pub Seven.");
+                Thread.sleep(4000);
 
-            System.out.println("And yet… somehow… you endure.");
-            Thread.sleep(2500);
+                System.out.println("And yet… somehow… you endure.");
+                Thread.sleep(2500);
 
-            System.out.println("The air here is thick with mystery. Or maybe that’s just the smell of spilt ale baked into the ancient stone. It’s getting hard to tell.");
-            Thread.sleep(3500);
+                System.out.println("The air here is thick with mystery. Or maybe that’s just the smell of spilt ale baked into the ancient stone. It’s getting hard to tell.");
+                Thread.sleep(3500);
 
-            System.out.println("Your vision swims. The walls shimmer. The floor breathes. You’re not entirely convinced you haven’t imagined this place.");
-            Thread.sleep(3500);
+                System.out.println("Your vision swims. The walls shimmer. The floor breathes. You’re not entirely convinced you haven’t imagined this place.");
+                Thread.sleep(3500);
 
-            System.out.println("It's possible you're lying facedown in a hallway somewhere hallucinating a secret realm.");
-            Thread.sleep(3300);
+                System.out.println("It's possible you're lying facedown in a hallway somewhere hallucinating a secret realm.");
+                Thread.sleep(3300);
 
-            System.out.println("But even if you are… what a hallucination.");
-            Thread.sleep(2500);
+                System.out.println("But even if you are… what a hallucination.");
+                Thread.sleep(2500);
 
-            System.out.println("Only one pub remains. One final drink. One last heroic, idiotic, magnificent step before you complete the legendary Twelve Pubs Challenge and ascend into the pantheon of absolute madlads.");
-            Thread.sleep(5000);
+                System.out.println("Only one pub remains. One final drink. One last heroic, idiotic, magnificent step before you complete the legendary Twelve Pubs Challenge and ascend into the pantheon of absolute madlads.");
+                Thread.sleep(5000);
 
-            System.out.println("Every muscle trembles. Your heartbeat sounds like a tavern drum being played by someone who has had far too much mead.");
-            Thread.sleep(3500);
+                System.out.println("Every muscle trembles. Your heartbeat sounds like a tavern drum being played by someone who has had far too much mead.");
+                Thread.sleep(3500);
 
-            System.out.println("Your thoughts are foggy—thick as the stout from Pub Four. But deep inside, beneath the exhaustion, beneath the dizziness, beneath the questionable decisions… a fire still burns.");
-            Thread.sleep(4500);
+                System.out.println("Your thoughts are foggy—thick as the stout from Pub Four. But deep inside, beneath the exhaustion, beneath the dizziness, beneath the questionable decisions… a fire still burns.");
+                Thread.sleep(4500);
 
-            System.out.println("You’re going to make it.");
-            Thread.sleep(2000);
+                System.out.println("You’re going to make it.");
+                Thread.sleep(2000);
 
-            System.out.println("Even if the ground is currently tilting. Even if you’re seeing two doors when there should be one.");
-            Thread.sleep(3000);
+                System.out.println("Even if the ground is currently tilting. Even if you’re seeing two doors when there should be one.");
+                Thread.sleep(3000);
 
-            System.out.println("Even if you’re not entirely sure Agartha is real and not the product of whatever was in that glowing bottle from Pub Ten.");
-            Thread.sleep(4000);
+                System.out.println("Even if you’re not entirely sure Agartha is real and not the product of whatever was in that glowing bottle from Pub Ten.");
+                Thread.sleep(4000);
 
-            System.out.println("You press forward, because heroes don’t quit. Heroes don’t fall. Heroes may stumble, trip, argue with furniture, and briefly forget their own name… but they do not quit.");
-            Thread.sleep(5000);
+                System.out.println("You press forward, because heroes don’t quit. Heroes don’t fall. Heroes may stumble, trip, argue with furniture, and briefly forget their own name… but they do not quit.");
+                Thread.sleep(5000);
 
-            System.out.println("And tonight—whether this is reality, a dream, or a hallucination written by a drunk wizard—you are a hero.");
-            Thread.sleep(3500);
+                System.out.println("And tonight—whether this is reality, a dream, or a hallucination written by a drunk wizard—you are a hero.");
+                Thread.sleep(3500);
 
-            System.out.println("The final drink awaits.");
-            Thread.sleep(2500);
+                System.out.println("The final drink awaits.");
+                Thread.sleep(2500);
 
-            System.out.println("May your stomach hold firm. May your liver forgive you. May you remain conscious long enough to see the credits roll.");
-            Thread.sleep(4000);
+                System.out.println("May your stomach hold firm. May your liver forgive you. May you remain conscious long enough to see the credits roll.");
+                Thread.sleep(4000);
 
-            System.out.println("Welcome… to Agartha.");
-            Thread.sleep(2500);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+                System.out.println("Welcome… to Agartha.");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
     }
 
     public static void main(String[] args) {

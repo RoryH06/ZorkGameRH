@@ -36,7 +36,7 @@ public class MerchantNPC extends NPC {
 
         Item merchantItem = inventory.get(0);
 
-        player.leaveItem(requiredItem, player.getCurrentRoom());
+        player.getInventory().remove(requiredItem);
         inventory.add(requiredItem);
 
         room.getItems().add(merchantItem);

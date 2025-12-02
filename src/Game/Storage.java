@@ -1,8 +1,9 @@
 package Game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Storage {
+public abstract class Storage implements Serializable {
     protected String name;
     protected String description;
     protected ArrayList<Item> items = new ArrayList<>();
@@ -27,7 +28,7 @@ public abstract class Storage {
         for (Item item : items) {
             if (item.getName().equalsIgnoreCase(targetName)) {
                 items.remove(item);
-                character.addItem(item); // adds to Character’s inventory
+                character.addItem(item);
                 System.out.println("You loot " + item.getName() + " from the " + name + ".");
                 return item;
             }

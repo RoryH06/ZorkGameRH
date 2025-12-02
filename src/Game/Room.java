@@ -3,29 +3,28 @@ package Game;
 import Conditions.RoomCondition;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Room implements Serializable {
+
     private String name;
     private String description;
-    private Map<String, Room> exits;
-    private ArrayList<Item> items;
-    private ArrayList<NPC> npcs;
+
+    private Map<String, Room> exits = new HashMap<>();
+    private Container<Item> items;
+    private Container<NPC> npcs;
     private List<RoomCondition> conditions = new ArrayList<>();
-    private Map<String, Storage>  storages;
+    private Map<String, Storage> storages = new HashMap<>();
+
+    private TeleportDestination teleportDestination;
     private int mapX;
     private int mapY;
 
     public Room(String name, String description) {
         this.name = name;
         this.description = description;
-        exits = new HashMap<>();
-        items = new ArrayList<>();
-        npcs = new ArrayList<>();
-        storages = new HashMap<>();
+        this.items = new Container<>();
+        this.npcs = new Container<>();
     }
 
     public String getName() {
@@ -37,11 +36,21 @@ public class Room implements Serializable {
     }
 
     public void setExit(String direction, Room neighbor) {
-        exits.put(direction, neighbor);
+        exits.put(direction.toLowerCase(), neighbor);
     }
 
     public Room getExit(String direction) {
-        return exits.get(direction);
+        return exits.get(direction.toLowerCase());
+    }
+
+    public String getExitString() {
+        if (exits.isEmpty()) return "No exits";
+
+        StringBuilder sb = new StringBuilder();
+        for (String dir : exits.keySet()) {
+            sb.append(dir).append(" ");
+        }
+        return sb.toString().trim();
     }
 
     public void addCondition(RoomCondition condition) {
@@ -57,57 +66,39 @@ public class Room implements Serializable {
         return null;
     }
 
-    public String getExitString() {
-        StringBuilder sb = new StringBuilder();
-        for (String direction : exits.keySet()) {
-            sb.append(direction).append(" ");
-        }
-        return sb.toString().trim();
-    }
-
     public void addItem(Item item) {
         items.add(item);
     }
+
+    public Container<Item> getItems() {
+        return items; }
 
     public void addNPC(NPC npc) {
         npcs.add(npc);
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
-    }
-
-    public ArrayList<NPC> getNPCs() {
-        return npcs;
-    }
+    public Container<NPC> getNPCs() { return npcs; }
 
     public void look() {
         if (items.isEmpty()) {
-            System.out.println("No items in this room");
+            System.out.println("No items in this room.");
         } else {
             System.out.println("Items in this room:");
-            for (Item item : items) {
-                System.out.println(item.getName());
-            }
+            items.forEach(i -> System.out.println(i.getName()));
         }
 
         if (npcs.isEmpty()) {
             System.out.println("There's nobody here...");
         } else {
             System.out.println("NPCs in this room:");
-            for (NPC npc : npcs) {
-                System.out.println(npc.getName() + ": " + npc.getDescription());
-            }
+            npcs.forEach(n -> System.out.println(n.getName() + ": " + n.getDescription()));
         }
 
-        if (storages == null) {
+        if (storages.isEmpty()) {
             System.out.println("There's no storage unit here.");
         } else {
-            System.out.println("There is: ");
-            for (String name : storages.keySet()) {
-                System.out.println(" - " + storages.get(name).getName());
-
-            }
+            System.out.println("Available storage units:");
+            storages.values().forEach(s -> System.out.println(" - " + s.getName()));
         }
     }
 
@@ -138,5 +129,13 @@ public class Room implements Serializable {
 
     public Map<String, Storage> getStorages() {
         return storages;
-        }
+    }
+
+    public TeleportDestination getTeleportDestination() {
+        return teleportDestination;
+    }
+
+    public void setTeleportDestination(TeleportDestination teleportDestination) {
+        this.teleportDestination = teleportDestination;
+    }
 }

@@ -6,7 +6,7 @@ public class ElfHatCondition implements RoomCondition {
 
     @Override
     public boolean canEnter(Character player) {
-        return player.isWearingElfHat();   // you define this in Player
+        return player.isWearingElfHat();
     }
 
     @Override
