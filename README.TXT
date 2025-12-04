@@ -1,55 +1,85 @@
-The new and enhanced Java text adventure should be used to illustrate many key Java programming functionalities, including:
+Requirements
 
-Object-oriented concepts: Classes, objects, inheritance, interfaces, polymorphism (e.g., different item types with subclassing).
+Java 11 or higher
 
-GUI.GUI programming: Swing or JavaFX interfaces for richer interaction.
+IDE (e.g., IntelliJ, Eclipse) or command-line tools
 
-File I/O: Loading and saving game state or configurations.
+Running the Game
 
-Collections framework: Use of List, Map, Set for storing rooms, items, commands, NPCs.
+Clone the repository:
 
-Exception handling: Managing invalid user input or game errors gracefully.
+git clone https://github.com/RoryH06/ZorkGameRH
 
-Input parsing: String manipulation, tokenization, and command pattern interpretation.
+Open the project in your IDE.
 
-Generics: Containers or utilities using generic classes.
+Run the ZorkULGame class to start the game.
 
-Enums: Defining command types, directions, or game states.
+Project Structure:
 
-Serialization: For saving complex game objects.
+Core Packages:
 
-Unit testing: JUnit-based test cases for game mechanics.
+Game/ — Core gameplay classes
 
-Reflection: Dynamic class loading for mods or plugins.
+Room, Item, NPC, Command, Parser, etc.
 
-Annotations: Metadata for commands or game rules.
+Conditions/ — Custom gameplay conditions
 
-Advanced:
-   Multithreading: Background tasks like timed events or Game.NPC behaviors.
-   Networking: Multiplayer functionalities or online leaderboards.
+BeerRequirementCondition, ElfHatCondition, RorysKeysCondition, etc.
 
+GUI/ — Optional graphical interface components
 
-Here are some possible extensions you might use to implement some of the above:
+GUI, Map
 
-Add items and inventory: Allow players to pick up, use, and drop items scattered throughout rooms. Manage player inventory and item interactions.
+Key Classes
 
-Introduce puzzles and challenges: Implement simple logic puzzles or locked doors requiring keys or solving riddles to progress.
+Class
 
-Create Game.NPC characters: Add non-player characters with whom players can interact via dialogue, trading, or quests.
+Description
 
-Add scoring or objectives: Introduce goals like collecting certain items or reaching rooms within time or moves to give players purpose.
+Room
 
-Expand room complexity: Add more rooms with branching paths, hidden passages, or special events triggered by player actions.
+Represents a location in the game
 
-Implement saving and loading: Allow players to save game state and resume later.
+Item
 
-Improve command parser: Support more nuanced commands, synonyms, or multi-word inputs for richer interaction.
+Objects players can interact with
 
-Add sound or basic graphics: Integrate simple audio cues or ASCII art to enhance immersion.
+NPC / FriendlyNPC / MerchantNPC
 
-Support multiple players or multiplayer: Enable turn-based multiplayer gameplay or allow multiple players in the same world.
+Non-player characters
 
-Add difficulty levels or hints: Provide adjustable challenges or in-game help to guide new players.
+CommandWords
 
-These extensions could greatly increase gameplay depth, player engagement, and replayability for this classic text adventure foundation
+Valid player commands
 
+Storage / LockedStorage / OpenStorage
+
+Item containers
+
+TeleportDestination
+
+Enum for teleport targets
+
+Game Logic:
+
+Conditions are modular and can be attached to rooms, items, or events.
+
+Commands are parsed and executed via the Parser and Command classes.
+
+Items may be Drinkable, Container, or interactable in other ways.
+
+Gameplay Features:
+
+Modular condition system for unlocking rooms
+
+NPC interactions with friendly and merchant types
+
+Inventory management and storage systems
+
+Teleportation and map-based navigation
+
+Optional GUI layer for visual enhancements
+
+Credits:
+
+Created by Rory Harrington. Inspired by Zork and other classic text adventures.
