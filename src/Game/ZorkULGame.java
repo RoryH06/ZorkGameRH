@@ -153,18 +153,14 @@ public class ZorkULGame implements Serializable {
                 "\nA nice turqoise and orange pair of running shoes.",
                 "These shoes are needed for running"));
 
-        LockedStorage Chest = new LockedStorage("0410",
+        LockedStorage Chest = new LockedStorage("1234",
                 "Chest",
-                "\"The code is somebody's birthday who you hold dear to you.\"");
+                "\"Probably a really easy code.\"");
         square.addStorage("Chest", Chest);
 
         square.getStorage("chest").addItem(new Item("MonopolyMoney",
                 "\n10 Monopoly Money. \n\"What the fuck am I supposed to do with Monopoly Money\"",
                 "You fondly remember the time you scammed Sam on monopoly."));
-
-        square.getStorage("chest").addItem(new Item("Teleporter",
-                "\nThis seems to be some kind of teleporter.",
-                "\"'AscensionToAgartha-4000', thats a peculiar name\""));
 
         square.getStorage("chest").addItem(new Item("Tenner",
                 "\n\"Mmmmmm 2 more pints.\"",
@@ -255,6 +251,17 @@ public class ZorkULGame implements Serializable {
                 "\nDrinking moonshine:\n+ Probably illegal\n+ Definitely dangerous\n+ Might go blind",
                 "The jar has no label. Just a hand-written warning: \"DONT.\"");
 
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
+        agartha.addItem(mead);
         agartha.addItem(mead);
         jacks.addItem(coke);
         nedkellys.addItem(vodka);
@@ -413,6 +420,9 @@ public class ZorkULGame implements Serializable {
                 break;
             case "use":
                 doUse(command);
+                break;
+            case "beerblackhole":
+                doCheat(command);
                 break;
             case "equip":
                 doEquip(command);
@@ -955,6 +965,22 @@ public class ZorkULGame implements Serializable {
         return null;
     }
 
+    public void doCheat(Command command) {
+        Room agartha = null;
+        for (Room r : allRooms) {
+            if (r.getName().equalsIgnoreCase("Agartha")) {
+                agartha = r;
+                break;
+            }
+        }
+
+        if (agartha != null) {
+            player.setCurrentRoom(agartha);
+            System.out.println("BLACK WHOLE INITIATED");
+        } else {
+            System.out.println("Cheat failed: Room 'Agartha' not found.");
+        }
+    }
 
     public void doTeleport(Command command) {
         Item teleporter = null;

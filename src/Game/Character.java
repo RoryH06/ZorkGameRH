@@ -156,4 +156,7 @@ public class Character implements Serializable {
     public void addItem(Item item) {
         inventory.add(item);
     }
+
+    public void setDrinkCount(int i) {
+    }
 }

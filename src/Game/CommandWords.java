@@ -31,6 +31,7 @@ public class CommandWords implements Serializable {
         validCommands.put("use", "perhaps you can use somebody's keys to unlock a door.");
         validCommands.put("equip", "equip some vanity");
         validCommands.put("teleport" , "teleport to an unknown realm");
+        validCommands.put("beerblackhole" , "drink manymanymany beers.");
     }
 
     public boolean isCommand(String commandWord) {
